@@ -73,12 +73,12 @@ article {
 .title {
     font-size: 2rem;
     font-weight: 600;
-}	
+}
 
 .headerList {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    width: 100%;
+    width: 95%;
     color: #6d6d6d;
     padding: 0 1rem;
 }
@@ -92,7 +92,7 @@ article {
 }
 
 .ItemTags {
-    width: 100%;
+    width: 95%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     border-bottom: 1px solid #ccc;

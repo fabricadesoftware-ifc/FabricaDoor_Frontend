@@ -21,10 +21,9 @@ const tags = ref([
         <div class="title">Logs de Acesso Recentes</div>
 
         <div class="list">
-            <h3>Tags Ativas</h3>
             <div class="headerList">
-                <p>Hora</p>
-                <p>Usuario</p>
+                <p>Hora:</p>
+                <p>Usuario:</p>
             </div>
             <div v-for="(item, index) in tags" :key="index" class="ItemTags">
                 <p>{{ item.hora }}</p>
