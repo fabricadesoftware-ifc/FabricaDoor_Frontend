@@ -21,7 +21,7 @@ import DoorOpen from 'vue-material-design-icons/DoorOpen.vue';
 
 <style scoped>
 section {
-    width: 95%;
+    width: 80%;
     margin: 3rem auto;
     display: flex;
     flex-direction: column;

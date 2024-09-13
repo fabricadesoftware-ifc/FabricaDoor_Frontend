@@ -20,7 +20,7 @@ import FooterComp from '@/components/global/Footer/FooterComp.vue';
 section.two {
     display: flex;
     gap: 1rem;
-    width: 95%;
+    width: 80%;
     margin: auto;
 }
 </style>

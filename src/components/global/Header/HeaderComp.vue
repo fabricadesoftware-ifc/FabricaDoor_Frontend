@@ -3,42 +3,42 @@ import { ref } from 'vue';
 import LockOutline from 'vue-material-design-icons/LockOutline.vue';
 import LockOpenOutline from 'vue-material-design-icons/LockOpenOutline.vue';
 
-// Variável reativa para controlar o estado do ícone
 const isHovered = ref(false);
 
-// Funções para alternar o ícone quando o mouse entra e sai da área
 const handleMouseEnter = () => {
-  isHovered.value = true;
+    isHovered.value = true;
 };
 
 const handleMouseLeave = () => {
-  isHovered.value = false;
+    isHovered.value = false;
 };
 </script>
 
 <template>
     <header>
-        <div class="logo" @mouseover="handleMouseEnter" @mouseleave="handleMouseLeave">
-            <!-- Alterna entre os dois componentes de ícone com base no estado de hover -->
-            <component :is="isHovered ? LockOpenOutline : LockOutline" :size="60" />
-            <router-link to="/" class="title">FabricaDoor</router-link>
+        <div class="container">
+            <div class="logo" @mouseover="handleMouseEnter" @mouseleave="handleMouseLeave">
+                <!-- Alterna entre os dois componentes de ícone com base no estado de hover -->
+                <component :is="isHovered ? LockOpenOutline : LockOutline" :size="60" />
+                <router-link to="/" class="title">FabricaDoor</router-link>
+            </div>
+            <nav>
+                <ul>
+                    <li>
+                        <router-link to="/dashboard">Dashboard</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/">Tags</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/">Logs</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/">Configurações</router-link>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        <nav>
-            <ul>
-                <li>
-                    <router-link to="/dashboard">Dashboard</router-link>
-                </li>
-                <li>
-                    <router-link to="/">Tags</router-link>
-                </li>
-                <li>
-                    <router-link to="/">Logs</router-link>
-                </li>
-                <li>
-                    <router-link to="/">Configurações</router-link>
-                </li>
-            </ul>
-        </nav>
     </header>
 </template>
 
@@ -52,10 +52,22 @@ header {
     border-bottom: 1px solid #ccc;
 }
 
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 0 auto;
+}
+
+nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
 .logo {
     display: flex;
     align-items: center;
-    cursor: pointer; /* Adiciona um cursor pointer para indicar interatividade */
+    cursor: pointer;
 }
 
 a.title {
@@ -79,7 +91,7 @@ a {
 a::after {
     content: '';
     position: absolute;
-    left: 0;
+    right: 0;
     bottom: -3px;
     width: 0;
     height: 2px;
