@@ -1,5 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
+import ModalComp from './ModalComp.vue';
+import ModalTagsComp from './ModalTagsComp.vue';
+import ArrowExpand from "vue-material-design-icons/ArrowExpand.vue";
 
 const tags = ref([
     { id: 1, user: 'user1', status: 'Desativado' },
@@ -14,44 +17,50 @@ const tags = ref([
     { id: 10, user: 'user10', status: 'Desativado' },
 ]);
 
-const activeTags = computed(() => tags.value.filter(tag => tag.status === 'Ativo'));
-const inactiveTags = computed(() => tags.value.filter(tag => tag.status !== 'Ativo'));
+const orderedTags = computed(() => {
+    return [...tags.value].sort((a) => {
+        return a.status === 'Desativado' ? -1 : 1;
+    });
+});
+
+const showModal = ref(false);
+const showModalTags = ref(false);
+const selected = ref({});
+
+function openModal(item) {
+    selected.value = item;
+    showModal.value = true;
+}
 </script>
 
+
 <template>
+    <ModalComp v-model:isOpen="showModal" :objectSelected="selected" />
+    <ModalTagsComp v-model:isOpen="showModalTags" />
+
     <article>
-        <div class="title">Gerenciar Tags</div>
+        <div class="title">
+            Gerenciar Tags
+            <ArrowExpand :size="30" @click="showModalTags = true" />
+        </div>
 
         <div class="list">
-            <h3>Tags Ativas</h3>
             <div class="headerList">
                 <p>Id da Tag</p>
                 <p>Usuario</p>
                 <p>Status</p>
             </div>
-            <div v-for="(item, index) in activeTags" :key="index" class="ItemTags">
-                <p>{{ item.id }}</p>
-                <p>{{ item.user }}</p>
-                <span style="display: flex; gap: .5rem;">
-                    <img src="/public/approved.svg" width="10%" alt="">
-                    <p>{{ item.status }}</p>
-                </span>
-            </div>
-        </div>
-        <div class="list">
-            <h3>Tags Desativadas</h3>
-            <div class="headerList">
-                <p>Id da Tag</p>
-                <p>Usuario</p>
-                <p>Status</p>
-            </div>
-            <div v-for="(item, index) in inactiveTags" :key="index" class="ItemTags">
+            <div v-for="(item, index) in orderedTags" :key="index" class="ItemTags">
                 <p>{{ item.id }}</p>
                 <p>{{ item.user }}</p>
                 <span style="display: flex; gap: .5rem; align-items: center; justify-content: space-between;">
-                    <img src="/public/denied.svg" width="10%" alt="">
+                    <img v-if="item.status === 'Ativo'" src="/public/approved.svg" width="10%" alt="Aprovado">
+                    <img v-if="item.status === 'Desativado'" src="/public/denied.svg" width="10%" alt="Desativado">
                     <p>{{ item.status }}</p>
-                    <button>Ativar</button>
+
+                    <HoverButton text="Ativar" color="green" hoverTextColor="white" v-if="item.status === 'Desativado'"
+                        @click="openModal(item)" />
+
                 </span>
             </div>
         </div>
@@ -64,15 +73,17 @@ article {
     border-radius: 15px;
     border: 1px solid #ccc;
     display: flex;
-    padding: 1rem 2rem;
+    padding: 3rem;
     flex-direction: column;
-    justify-content: space-around;
     gap: 3rem;
 }
 
 .title {
     font-size: 2rem;
     font-weight: 600;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 .headerList {
@@ -87,12 +98,12 @@ article {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 200px;
+    max-height: 500px;
     overflow-y: auto;
 }
 
 .ItemTags {
-    width: 95%;
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     border-bottom: 1px solid #ccc;
@@ -117,5 +128,12 @@ button {
 button:hover {
     background-color: #000000dc;
     color: #fff;
+}
+
+span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
 }
 </style>

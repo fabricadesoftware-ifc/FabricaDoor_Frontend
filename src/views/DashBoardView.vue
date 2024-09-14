@@ -4,6 +4,7 @@ import CardsComp from '@/components/DashBoard/CardsComp.vue';
 import LogsComp from '@/components/DashBoard/LogsComp.vue';
 import TagsComp from '@/components/DashBoard/TagsComp.vue';
 import FooterComp from '@/components/global/Footer/FooterComp.vue';
+
 </script>
 
 <template>

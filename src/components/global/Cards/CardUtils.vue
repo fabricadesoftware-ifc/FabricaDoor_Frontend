@@ -11,7 +11,7 @@ defineProps({
         <div class="text">
             <p> {{ title }}</p>
             <div>
-                <component :is="icon" :size="20" />
+                <component :is="icon" :size="30" />
             </div>
         </div>
         <div class="number">

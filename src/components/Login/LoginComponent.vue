@@ -55,7 +55,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f1f1f1;
+    /* background-color: #f1f1f1; */
 }
 
 section {
@@ -70,6 +70,7 @@ section {
     gap: 1rem;
     align-items: center;
     justify-content: space-around;
+    border: 1px solid #ccc;
 }
 
 .title {
@@ -132,7 +133,6 @@ form {
 
 h2 {
     text-decoration: none;
-    color: #000;
     position: relative;
     transition: color 0.3s ease-in-out;
 }

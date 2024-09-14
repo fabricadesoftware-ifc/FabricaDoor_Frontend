@@ -83,7 +83,6 @@ ul {
 
 a {
     text-decoration: none;
-    color: #000;
     position: relative;
     transition: color 0.3s ease-in-out;
 }

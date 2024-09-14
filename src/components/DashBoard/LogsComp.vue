@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from 'vue';
+import ArrowExpand from "vue-material-design-icons/ArrowExpand.vue";
+import ModalLogsComp from './ModalLogsComp.vue';
+
+const showModalLogs = ref(false);
 
 const tags = ref([
     { hora: 1, user: 'user1', },
@@ -17,8 +21,12 @@ const tags = ref([
 </script>
 
 <template>
+    <ModalLogsComp v-model:isOpen="showModalLogs" />
     <article>
-        <div class="title">Logs de Acesso Recentes</div>
+        <div class="title">
+            Logs de Acesso Recentes
+            <ArrowExpand :size="30" @click="showModalLogs = true" />
+        </div>
 
         <div class="list">
             <div class="headerList">
@@ -33,8 +41,8 @@ const tags = ref([
                 </span>
             </div>
         </div>
-        
-     
+
+
     </article>
 </template>
 
@@ -44,7 +52,7 @@ article {
     border-radius: 15px;
     border: 1px solid #ccc;
     display: flex;
-    padding: 1rem 2rem;
+    padding: 3rem;
     flex-direction: column;
     gap: 3rem;
 }
@@ -52,7 +60,17 @@ article {
 .title {
     font-size: 2rem;
     font-weight: 600;
-}	
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+span{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
 
 .headerList {
     display: grid;
