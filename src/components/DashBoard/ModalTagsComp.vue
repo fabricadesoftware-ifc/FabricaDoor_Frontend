@@ -5,6 +5,12 @@ import ModalComp from './ModalComp.vue';
 import HoverButton from '../global/Buttons/HoverButton.vue';
 import Magnify from 'vue-material-design-icons/Magnify.vue';
 
+import { useTagsStore } from '@/stores';
+const tagsStore = useTagsStore();
+
+const tags = computed(() => tagsStore.state.tags);
+
+
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
     isOpen: Boolean,
@@ -16,24 +22,11 @@ const closeModal = () => {
     emit("update:isOpen", false);
 };
 
-const tags = ref([
-    { id: 1, user: 'user1', status: 'Desativado' },
-    { id: 2, user: 'user2', status: 'Ativo' },
-    { id: 3, user: 'user3', status: 'Ativo' },
-    { id: 4, user: 'user4', status: 'Ativo' },
-    { id: 5, user: 'user5', status: 'Ativo' },
-    { id: 6, user: 'user6', status: 'Desativado' },
-    { id: 7, user: 'user7', status: 'Desativado' },
-    { id: 8, user: 'user8', status: 'Ativo' },
-    { id: 9, user: 'user9', status: 'Ativo' },
-    { id: 10, user: 'user10', status: 'Desativado' },
-]);
-
-const orderedTags = computed(() => {
-    return [...tags.value].sort((a) => {
-        return a.status === 'Desativado' ? -1 : 1;
-    });
-});
+// const orderedTags = computed(() => {
+//     return [...tags.value].sort((a) => {
+//         return a.status === 'Desativado' ? -1 : 1;
+//     });
+// });
 
 const showModal = ref(false);
 const selected = ref({});
@@ -67,16 +60,19 @@ function openModal(item) {
                     <p>Usuario</p>
                     <p>Status</p>
                 </div>
-                <div v-for="(item, index) in orderedTags" :key="index" class="ItemTags">
+                <div v-for="(item, index) in tags" :key="index" class="ItemTags">
                     <p>{{ item.id }}</p>
-                    <p>{{ item.user }}</p>
+                    <p>{{ item.rfid }}</p>
                     <span>
-                        <img v-if="item.status === 'Ativo'" src="/public/approved.svg" width="10%" alt="Aprovado">
+                        <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
 
-                        <img v-if="item.status === 'Desativado'" src="/public/denied.svg" width="10%" alt="Desativado">
-                        <p>{{ item.status }}</p>
+                        <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
+                        <p>{{ item.valid
+                            ? 'Ativo'
+                            : 'Desativado'
+                            }}</p>
 
-                        <HoverButton v-if="item.status === 'Desativado'" text="Ativar" color="black"
+                        <HoverButton v-if="item.valid === 'Desativado'" text="Ativar" color="black"
                             hoverTextColor="white" @click="openModal(item)" />
                     </span>
                 </div>

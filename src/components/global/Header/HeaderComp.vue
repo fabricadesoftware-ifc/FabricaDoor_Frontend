@@ -2,6 +2,9 @@
 import { ref } from 'vue';
 import LockOutline from 'vue-material-design-icons/LockOutline.vue';
 import LockOpenOutline from 'vue-material-design-icons/LockOpenOutline.vue';
+import { useAuthStore } from '@/stores';
+
+const authStore = useAuthStore();
 
 const isHovered = ref(false);
 
@@ -35,6 +38,12 @@ const handleMouseLeave = () => {
                     </li>
                     <li>
                         <router-link to="/">Configurações</router-link>
+                    </li>
+                    <li v-if="authStore.authUser.isLogged">
+                        <span to="/login" @click="authStore.logout" class="logout">
+                            <img src="/public/logout.svg" alt="">
+                            Logout
+                        </span>
                     </li>
                 </ul>
             </nav>
@@ -109,5 +118,20 @@ a:hover::after {
 li {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
+
+.logout {
+    color: red;
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    cursor: pointer;
+}
+
+.logout img {
+    width: 20px;
+    height: 20px;
+}
+
 </style>

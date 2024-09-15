@@ -1,9 +1,16 @@
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import LockOutline from 'vue-material-design-icons/LockOutline.vue';
 import LockOpenOutline from 'vue-material-design-icons/LockOpenOutline.vue';
+import { useAuthStore } from '@/stores';
 
 const isHovered = ref(false);
+const authStore = useAuthStore();
+
+const dataUser = reactive({
+    email: '',
+    password: '',
+});
 
 const handleMouseEnter = () => {
     isHovered.value = true;
@@ -30,17 +37,17 @@ const handleMouseLeave = () => {
                 </div>
             </div>
             <div class="form">
-                <form>
+                <form @submit.prevent>
                     <div class="input">
                         <label for="email">Email:</label>
-                        <input type="email" id="email" />
+                        <input type="email" id="email" v-model="dataUser.email" />
                     </div>
                     <div class="input">
                         <label for="password">Senha:</label>
-                        <input type="password" id="password" />
+                        <input type="password" id="password" v-model="dataUser.password" />
                     </div>
                     <div class="button">
-                        <button>Entrar</button>
+                        <button @click="authStore.login(dataUser)">Entrar</button>
                     </div>
                 </form>
             </div>

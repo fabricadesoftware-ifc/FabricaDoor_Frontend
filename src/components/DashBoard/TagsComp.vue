@@ -1,27 +1,23 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { useTagsStore } from '@/stores';
 import ModalComp from './ModalComp.vue';
 import ModalTagsComp from './ModalTagsComp.vue';
 import ArrowExpand from "vue-material-design-icons/ArrowExpand.vue";
+// import { storeToRefs } from 'pinia';
 
-const tags = ref([
-    { id: 1, user: 'user1', status: 'Desativado' },
-    { id: 2, user: 'user2', status: 'Ativo' },
-    { id: 3, user: 'user3', status: 'Ativo' },
-    { id: 4, user: 'user4', status: 'Ativo' },
-    { id: 5, user: 'user5', status: 'Ativo' },
-    { id: 6, user: 'user6', status: 'Desativado' },
-    { id: 7, user: 'user7', status: 'Desativado' },
-    { id: 8, user: 'user8', status: 'Ativo' },
-    { id: 9, user: 'user9', status: 'Ativo' },
-    { id: 10, user: 'user10', status: 'Desativado' },
-]);
+const tagsStore = useTagsStore();
 
-const orderedTags = computed(() => {
-    return [...tags.value].sort((a) => {
-        return a.status === 'Desativado' ? -1 : 1;
-    });
-});
+const tags = computed(() => tagsStore.state.tags);
+
+// // Ordenar as tags com base no campo 'valid'
+// const orderedTags = computed(() => {
+//     return [tags.value].sort((a, b) => {
+//         // Coloque as tags válidas (active) no topo
+//         if (a.valid === b.valid) return 0;
+//         return a.valid ? -1 : 1;
+//     });
+// });
 
 const showModal = ref(false);
 const showModalTags = ref(false);
@@ -32,7 +28,6 @@ function openModal(item) {
     showModal.value = true;
 }
 </script>
-
 
 <template>
     <ModalComp v-model:isOpen="showModal" :objectSelected="selected" />
@@ -47,20 +42,21 @@ function openModal(item) {
         <div class="list">
             <div class="headerList">
                 <p>Id da Tag</p>
-                <p>Usuario</p>
+                <p>RFID</p>
                 <p>Status</p>
             </div>
-            <div v-for="(item, index) in orderedTags" :key="index" class="ItemTags">
+
+            <div v-for="(item) in tags" :key="item.id" class="ItemTags">
                 <p>{{ item.id }}</p>
-                <p>{{ item.user }}</p>
+                <p>{{ item.rfid }}</p>
+
                 <span style="display: flex; gap: .5rem; align-items: center; justify-content: space-between;">
-                    <img v-if="item.status === 'Ativo'" src="/public/approved.svg" width="10%" alt="Aprovado">
-                    <img v-if="item.status === 'Desativado'" src="/public/denied.svg" width="10%" alt="Desativado">
-                    <p>{{ item.status }}</p>
+                    <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
+                    <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
+                    <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
 
-                    <HoverButton text="Ativar" color="green" hoverTextColor="white" v-if="item.status === 'Desativado'"
+                    <HoverButton text="Ativar" color="green" hoverTextColor="white" v-if="!item.valid"
                         @click="openModal(item)" />
-
                 </span>
             </div>
         </div>
