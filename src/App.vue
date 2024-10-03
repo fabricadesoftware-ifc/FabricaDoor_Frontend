@@ -32,9 +32,14 @@ function changeColor() {
 }
 
 onMounted(async () => {
+  
+
   updateGlobalStyles();
   await tagsStore.getTags();
+
 });
+
+
 </script>
 
 <template>

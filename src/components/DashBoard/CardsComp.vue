@@ -39,4 +39,14 @@ section {
     gap: 1rem;
     justify-content: space-between;
 }
+
+@media screen and (max-width: 1024px) {
+    section {
+        width: 90%;
+    }
+
+    .cards {
+        flex-direction: column;
+    }
+}
 </style>

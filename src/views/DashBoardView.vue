@@ -4,7 +4,7 @@ import CardsComp from '@/components/DashBoard/CardsComp.vue';
 import LogsComp from '@/components/DashBoard/LogsComp.vue';
 import TagsComp from '@/components/DashBoard/TagsComp.vue';
 import FooterComp from '@/components/global/Footer/FooterComp.vue';
-
+import UsersComp from '@/components/DashBoard/UsersComp.vue';
 </script>
 
 <template>
@@ -14,6 +14,7 @@ import FooterComp from '@/components/global/Footer/FooterComp.vue';
         <TagsComp />
         <LogsComp />
     </section>
+    <UsersComp />
     <FooterComp />
 </template>
 
@@ -23,5 +24,11 @@ section.two {
     gap: 1rem;
     width: 80%;
     margin: auto;
+}
+
+@media screen and (max-width: 1024px) {
+    section.two {
+        flex-direction: column;
+    }
 }
 </style>

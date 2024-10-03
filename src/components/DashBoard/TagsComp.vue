@@ -50,7 +50,7 @@ function openModal(item) {
                 <p>{{ item.id }}</p>
                 <p>{{ item.rfid }}</p>
 
-                <span style="display: flex; gap: .5rem; align-items: center; justify-content: space-between;">
+                <span style="display: flex; gap: .5rem; align-items: center">
                     <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
                     <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
                     <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
@@ -99,15 +99,14 @@ article {
 }
 
 .ItemTags {
-    width: 100%;
+    width: 95%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     border-bottom: 1px solid #ccc;
-    height: 100px;
-    margin: 10px auto;
+    height: 50px;
     flex-direction: column;
     color: black;
-    padding: .5rem 1rem;
+    padding: 0rem 1rem;
     align-items: center;
 }
 
@@ -129,7 +128,6 @@ button:hover {
 span {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     cursor: pointer;
 }
 </style>

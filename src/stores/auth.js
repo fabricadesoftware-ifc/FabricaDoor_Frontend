@@ -9,7 +9,11 @@ export const useAuthStore = defineStore('auth', () => {
     token: null,
     isLogged: false,
     user: {
-      user: ''
+      email: '',
+      id: '',
+      name: '',
+      isSuper: false,
+      isVerified: false
     }
   })
 
@@ -18,34 +22,39 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (data) => {
     isLoading.value = true
     try {
-      console.log('login')
       const response = await AuthService.login(data)
+      if (response.data.isVerified == false) {
+        logout()
+      } else {
+        authUser.value = {
+          token: response.token,
+          isLogged: true,
+          user: {
+            email: data.email,
+            id: response.data.id,
+            name: response.data.name,
+            isSuper: response.data.isSuper,
+            isValid: response.data.isVerified
+          }
+        }
 
-      authUser.value = {
-        token: response.token,
-        isLogged: true,
-        user: {
-          user: data.email
+        if (response.data.isSuper) {
+          router.push('/dashboard')
+        } else {
+          router.push('/profile')
         }
       }
     } catch (error) {
       console.error(error)
     } finally {
       isLoading.value = false
-      router.push('/dashboard')
       console.log(authUser.value)
     }
   }
 
   const logout = async () => {
     try {
-      authUser.value = {
-        token: null,
-        isLogged: false,
-        user: {
-          user: ''
-        }
-      }
+      authUser.value = {}
       router.push('/login')
     } catch (error) {
       console.error(error)

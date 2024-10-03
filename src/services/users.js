@@ -3,7 +3,7 @@ import api from '@/plugin/axios'
 class UsersService {
   async getUsers() {
     try {
-      const response = await api.get('users/')
+      const response = await api.get('auth/users')
       return response.data
     } catch (error) {
       console.error(error)
@@ -12,7 +12,7 @@ class UsersService {
 
   async createUsers(data) {
     try {
-      const response = await api.post('users/', data)
+      const response = await api.post('auth/users', data)
       return response.data
     } catch (error) {
       console.error(error)
@@ -21,7 +21,7 @@ class UsersService {
 
   async updateUsers(data) {
     try {
-      const response = await api.put(`users/`, data)
+      const response = await api.put(`auth/users`, data)
       return response.data
     } catch (error) {
       console.error(error)
@@ -30,7 +30,7 @@ class UsersService {
 
   async deleteUsers(id) {
     try {
-      const response = await api.delete(`users/${id}/`)
+      const response = await api.delete(`auth/users${id}/`)
       return response.data
     } catch (error) {
       console.error(error)

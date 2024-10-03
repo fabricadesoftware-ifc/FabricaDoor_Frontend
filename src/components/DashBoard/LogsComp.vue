@@ -93,7 +93,7 @@ span{
     display: grid;
     grid-template-columns: 1fr 1fr;
     border-bottom: 1px solid #ccc;
-    height: 100px;
+    height: 50px;
     margin: 10px auto;
     flex-direction: column;
     color: black;

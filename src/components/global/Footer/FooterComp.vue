@@ -62,11 +62,21 @@ a.support {
     height: 50px;
 }
 
-
-
 span {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        width: 95%;
+        
+    }
+
+    .logo{
+        flex-direction: column;
+        align-items: start;
+    }
 }
 </style>
