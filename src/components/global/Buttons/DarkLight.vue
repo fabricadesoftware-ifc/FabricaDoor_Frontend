@@ -11,14 +11,15 @@ import ThemeLightDark from "vue-material-design-icons/ThemeLightDark.vue";
 <style scoped>
 button {
     position: fixed;
-    top: 90%;
-    left: 95%;
+    top: 85%;
+    left: 93%;
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 span {

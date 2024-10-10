@@ -1,6 +1,10 @@
 import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { TagsService } from '@/services'
+import { useAuthStore } from './auth'
+
+const store = useAuthStore()
+const token = store.authUser.token
 
 export const useTagsStore = defineStore('tags', () => {
   const state = reactive({
@@ -15,7 +19,7 @@ export const useTagsStore = defineStore('tags', () => {
   const getTags = async () => {
     state.loading = true
     try {
-      const response = await TagsService.getTags()
+      const response = await TagsService.getTags(token)
       state.tags = response.data || []
     } catch (error) {
       state.error = error
@@ -29,7 +33,7 @@ export const useTagsStore = defineStore('tags', () => {
     console.log('aoba')
     console.log(myId)
     try {
-      const response = await TagsService.getTags()
+      const response = await TagsService.getTags(token)
       console.log(response.data)
 
       const myTags = response.data.filter((tag) => tag.user_id === myId)
@@ -45,7 +49,7 @@ export const useTagsStore = defineStore('tags', () => {
   const createTags = async (newTag) => {
     state.loading = true
     try {
-      const createdTag = await TagsService.createTags(newTag)
+      const createdTag = await TagsService.createTags(token, newTag)
       state.tags.push(createdTag)
     } catch (error) {
       state.error = error
@@ -59,7 +63,7 @@ export const useTagsStore = defineStore('tags', () => {
     try {
       const index = state.tags.findIndex((s) => s.id === tag.id)
       if (index !== -1) {
-        state.tags[index] = await TagsService.updateTags(tag)
+        state.tags[index] = await TagsService.updateTags(token, tag)
       }
     } catch (error) {
       state.error = error
@@ -75,7 +79,7 @@ export const useTagsStore = defineStore('tags', () => {
       if (index !== -1) {
         state.tags.splice(index, 1) 
       }
-      await TagsService.deleteTags(id)
+      await TagsService.deleteTags(token, id)
     } catch (error) {
       state.error = error
     } finally {

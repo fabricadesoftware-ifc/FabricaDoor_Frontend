@@ -5,7 +5,6 @@ class DoorService {
     try {
       const response = await api.get('http://191.52.59.34:8087/api/door/open', {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         }
       })

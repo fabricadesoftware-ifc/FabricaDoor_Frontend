@@ -1,7 +1,10 @@
 import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { UsersService } from '@/services'
+import { useAuthStore } from './auth'
 
+const store = useAuthStore()
+const token = store.authUser.token
 export const useUsersStore = defineStore('users', () => {
   const state = reactive({
     users: [],
@@ -13,7 +16,7 @@ export const useUsersStore = defineStore('users', () => {
   const getUsers = async () => {
     state.loading = true
     try {
-      state.users = await UsersService.getUsers()
+      state.users = await UsersService.getUsers(token)
     } catch (error) {
       state.error = error
     } finally {
@@ -24,7 +27,7 @@ export const useUsersStore = defineStore('users', () => {
   const createUsers = async (newUser) => {
     state.loading = true
     try {
-      state.users.push(await UsersService.createUsers(newUser))
+      state.users.push(await UsersService.createUsers(token, newUser))
     } catch (error) {
       state.error = error
     } finally {
@@ -36,7 +39,7 @@ export const useUsersStore = defineStore('users', () => {
     state.loading = true
     try {
       const index = state.users.results.findIndex((s) => s.id === user.id)
-      state.users[index] = await UsersService.updateUsers(user)
+      state.users[index] = await UsersService.updateUsers(token, user)
     } catch (error) {
       state.error = error
     } finally {
@@ -49,7 +52,7 @@ export const useUsersStore = defineStore('users', () => {
     try {
       const index = state.users.findIndex((s) => s.id === id)
       state.users.splice(index, 1)
-      const result = await UsersService.deleteUsers(id)
+      const result = await UsersService.deleteUsers(token, id)
       console.log(result)
     } catch (error) {
       state.error = error
