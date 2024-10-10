@@ -3,8 +3,6 @@ import { defineStore } from 'pinia'
 import { TagsService } from '@/services'
 import { useAuthStore } from './auth'
 
-const store = useAuthStore()
-const token = store.authUser.token
 
 export const useTagsStore = defineStore('tags', () => {
   const state = reactive({
@@ -13,6 +11,8 @@ export const useTagsStore = defineStore('tags', () => {
     loading: false,
     error: null
   })
+  const store = useAuthStore()
+  const token = store.authUser.token
 
   const isLoading = computed(() => state.loading)
 

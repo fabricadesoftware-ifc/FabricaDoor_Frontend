@@ -3,8 +3,6 @@ import { defineStore } from 'pinia'
 import { DoorService } from '@/services'
 import { useAuthStore } from './auth'
 
-const store = useAuthStore()
-const token = store.authUser.token
 
 export const useDoorStore = defineStore('door', () => {
   const state = reactive({
@@ -12,7 +10,9 @@ export const useDoorStore = defineStore('door', () => {
     loading: false,
     error: null
   })
-
+  
+  const store = useAuthStore()
+  const token = store.authUser.token
   const openDoor = async () => {
     state.loading = true
     try {

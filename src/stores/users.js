@@ -3,8 +3,6 @@ import { defineStore } from 'pinia'
 import { UsersService } from '@/services'
 import { useAuthStore } from './auth'
 
-const store = useAuthStore()
-const token = store.authUser.token
 export const useUsersStore = defineStore('users', () => {
   const state = reactive({
     users: [],
@@ -12,7 +10,9 @@ export const useUsersStore = defineStore('users', () => {
     error: null
   })
   const isLoading = computed(() => state.loading)
-
+  
+  const store = useAuthStore()
+  const token = store.authUser.token
   const getUsers = async () => {
     state.loading = true
     try {
