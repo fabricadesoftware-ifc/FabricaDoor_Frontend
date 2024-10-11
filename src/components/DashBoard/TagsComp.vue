@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useTagsStore } from '@/stores';
 import ModalComp from './ModalComp.vue';
 import ModalTagsComp from './ModalTagsComp.vue';
@@ -27,6 +27,10 @@ function openModal(item) {
     selected.value = item;
     showModal.value = true;
 }
+
+onMounted(async () => {
+    await tagsStore.getTags();
+});
 </script>
 
 <template>

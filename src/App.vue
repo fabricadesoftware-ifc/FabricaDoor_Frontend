@@ -35,7 +35,7 @@ onMounted(async () => {
   
 
   updateGlobalStyles();
-  await tagsStore.getTags();
+  // await tagsStore.getTags();
 
 });
 
