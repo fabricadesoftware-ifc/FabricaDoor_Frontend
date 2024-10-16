@@ -5,7 +5,7 @@ class TagsService {
     try {
       const response = await api.get('tags/', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
       })
       return response.data
@@ -16,11 +16,15 @@ class TagsService {
 
   async createTags(token, data) {
     try {
-      const response = await api.post('tags/', {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await api.post(
+        'tags/',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         },
-      }, data)
+        data
+      )
       return response.data
     } catch (error) {
       console.error(error)
@@ -29,11 +33,15 @@ class TagsService {
 
   async updateTags(token, data) {
     try {
-      const response = await api.put(`tags/`,{
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await api.put(
+        `tags/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         },
-      }, data)
+        data
+      )
       return response.data
     } catch (error) {
       console.error(error)
@@ -42,9 +50,9 @@ class TagsService {
 
   async deleteTags(token, id) {
     try {
-      const response = await api.delete(`tags/${id}/`,{
+      const response = await api.delete(`tags/${id}/`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
       })
       return response.data

@@ -4,20 +4,15 @@ import { useTagsStore } from '@/stores';
 import ModalComp from './ModalComp.vue';
 import ModalTagsComp from './ModalTagsComp.vue';
 import ArrowExpand from "vue-material-design-icons/ArrowExpand.vue";
-// import { storeToRefs } from 'pinia';
 
 const tagsStore = useTagsStore();
-
 const tags = computed(() => tagsStore.state.tags);
 
-// // Ordenar as tags com base no campo 'valid'
-// const orderedTags = computed(() => {
-//     return [tags.value].sort((a, b) => {
-//         // Coloque as tags válidas (active) no topo
-//         if (a.valid === b.valid) return 0;
-//         return a.valid ? -1 : 1;
-//     });
-// });
+const orderedTags = computed(() => {
+    return tags.value.slice().sort((a, b) => {
+        return a.valid === b.valid ? 0 : a.valid ? -1 : 1;
+    });
+});
 
 const showModal = ref(false);
 const showModalTags = ref(false);
@@ -50,7 +45,7 @@ onMounted(async () => {
                 <p>Status</p>
             </div>
 
-            <div v-for="(item) in tags" :key="item.id" class="ItemTags">
+            <div v-for="(item) in orderedTags" :key="item.id" class="ItemTags">
                 <p>{{ item.id }}</p>
                 <p>{{ item.rfid }}</p>
 
@@ -59,8 +54,7 @@ onMounted(async () => {
                     <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
                     <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
 
-                    <HoverButton text="Ativar" color="green" hoverTextColor="white" v-if="!item.valid"
-                        @click="openModal(item)" />
+                    <HoverButton text="Ativar" color="green" hoverTextColor="white" v-if="!item.valid" @click="openModal(item)" />
                 </span>
             </div>
         </div>
@@ -88,7 +82,7 @@ article {
 
 .headerList {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1.5fr 1fr;
     width: 95%;
     color: #6d6d6d;
     padding: 0 1rem;
@@ -105,9 +99,9 @@ article {
 .ItemTags {
     width: 95%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1.5fr 1fr;
     border-bottom: 1px solid #ccc;
-    height: 50px;
+    height: 60px;
     flex-direction: column;
     color: black;
     padding: 0rem 1rem;

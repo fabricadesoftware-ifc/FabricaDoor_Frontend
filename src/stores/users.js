@@ -10,7 +10,8 @@ export const useUsersStore = defineStore('users', () => {
     error: null
   })
   const isLoading = computed(() => state.loading)
-  
+  const countUsers = computed(() => state.users.data?.users.length)
+
   const store = useAuthStore()
   const token = store.authUser.token
   const getUsers = async () => {
@@ -47,13 +48,15 @@ export const useUsersStore = defineStore('users', () => {
     }
   }
 
-  const deleteUsers = async (id) => {
+  const deleteUser = async (id) => {
     state.loading = true
     try {
-      const index = state.users.findIndex((s) => s.id === id)
-      state.users.splice(index, 1)
+      console.log(id)
+      const index = state.users.data?.users.findIndex((s) => s.id === id)
+      state.users.data?.users.splice(index, 1)
       const result = await UsersService.deleteUsers(token, id)
       console.log(result)
+      window.location.reload()
     } catch (error) {
       state.error = error
     } finally {
@@ -64,9 +67,10 @@ export const useUsersStore = defineStore('users', () => {
   return {
     state,
     isLoading,
+    countUsers,
     getUsers,
     createUsers,
     updateUsers,
-    deleteUsers
+    deleteUser
   }
 })

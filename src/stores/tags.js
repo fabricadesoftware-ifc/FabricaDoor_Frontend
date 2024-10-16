@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 import { TagsService } from '@/services'
 import { useAuthStore } from './auth'
 
-
 export const useTagsStore = defineStore('tags', () => {
   const state = reactive({
     tags: [],
@@ -13,6 +12,7 @@ export const useTagsStore = defineStore('tags', () => {
   })
   const store = useAuthStore()
   const token = store.authUser.token
+  const countTags = computed(() => state.tags.length)
 
   const isLoading = computed(() => state.loading)
 
@@ -75,9 +75,9 @@ export const useTagsStore = defineStore('tags', () => {
   const deleteTags = async (id) => {
     state.loading = true
     try {
-      const index = state.tags.findIndex((s) => s.id === id) 
+      const index = state.tags.findIndex((s) => s.id === id)
       if (index !== -1) {
-        state.tags.splice(index, 1) 
+        state.tags.splice(index, 1)
       }
       await TagsService.deleteTags(token, id)
     } catch (error) {
@@ -90,6 +90,7 @@ export const useTagsStore = defineStore('tags', () => {
   return {
     state,
     isLoading,
+    countTags,
     getTags,
     getMyTags,
     createTags,

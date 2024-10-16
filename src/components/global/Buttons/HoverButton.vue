@@ -1,18 +1,25 @@
 <script setup>
 defineProps({
     text: String,
-    color: String, // Cor da borda e do preenchimento no hover
-    hoverTextColor: String // Cor do texto no hover
+    color: String,
+    hoverTextColor: String
 });
 </script>
 
 <template>
-    <button :style="{ borderColor: color  }">
+    <button :style="{ borderColor: color }">
         {{ text }}
     </button>
 </template>
 
 <style scoped>
+:host {
+    --button-color: green;
+    --button-background-color: green;
+    --button-border-color: green;
+    --button-hover-text-color: white;
+}
+
 button {
     padding: 0.4em 1.2em;
     position: relative;
@@ -21,8 +28,7 @@ button {
     text-align: center;
     text-transform: uppercase;
     font-size: 16px;
-    transition: .3s;
-    /* z-index: 1; */
+    transition: color 0.3s ease, background-color 0.3s ease;
     font-family: inherit;
     color: var(--button-color) !important;
     border: 2px solid var(--button-border-color) !important;
@@ -31,32 +37,24 @@ button {
 
 button::before {
     content: '';
-    width: 0;
-    height: 300%;
+    width: 100%;
+    height: 0;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(45deg);
+    top: 100%;
+    left: 0;
     background: var(--button-background-color) !important;
-    transition: .2s ease;
-    display: block;
+    transition: height 0.3s ease;
     z-index: -1;
 }
 
 button:hover::before {
-    width: 105%;
+    height: 100%;
+    top: 0;
 }
 
 button:hover {
-    color: var(--button-hover-text-color) !important;
-    /* Cor do texto no hover */
-}
-
-:host {
-    --button-color: #17C3B2;
-    --button-background-color: #17C3B2;
-    --button-border-color: #17C3B2;
-    --button-hover-text-color: #111;
+    color: white !important;
+    background-color: var(--button-color) !important;
 }
 
 button {
@@ -66,5 +64,4 @@ button {
     --button-hover-text-color: v-bind(hoverTextColor) !important;
     cursor: pointer;
 }
-
 </style>

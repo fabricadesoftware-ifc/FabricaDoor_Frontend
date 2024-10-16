@@ -1,7 +1,9 @@
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue';
+import { onMounted, onBeforeUnmount } from "vue";
 import AlertOutline from "vue-material-design-icons/AlertOutline.vue";
 import HoverButton from "../global/Buttons/HoverButton.vue";
+import { useUsersStore } from "@/stores";
+const usersStore = useUsersStore();
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
@@ -15,52 +17,60 @@ const closeModal = () => {
     emit("update:isOpen", false);
 };
 
-const handleEscapeKey = (event) => {
-    if (event.key === 'Escape') {
+// Fecha o modal ao clicar fora dele
+const handleClickOutside = (event) => {
+    if (event.target.classList.contains("modal-background")) {
+        closeModal();
+    }
+};
+
+// Fecha o modal ao pressionar Esc
+const handleKeydown = (event) => {
+    if (event.key === "Escape") {
         closeModal();
     }
 };
 
 onMounted(() => {
-    window.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener("keydown", handleKeydown);
+    document.addEventListener("click", handleClickOutside);
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener('keydown', handleEscapeKey);
+    document.removeEventListener("keydown", handleKeydown);
+    document.removeEventListener("click", handleClickOutside);
 });
-
-const closeOnBackdrop = (event) => {
-    if (event.target === event.currentTarget) {
-        closeModal();
-    }
-};
 </script>
 
 <template>
-    <main v-if="isOpen" @click="closeOnBackdrop">
+    <main v-if="isOpen" class="modal-background">
         <section>
             <div style="display: flex; justify-content: space-between; flex-direction: column; gap: 1.5rem;">
                 <div class="text">
                     <div class="title">
                         <span>
                             <AlertOutline :size="30" />
-                            <h2 style="font-size: 1rem;">Confirmação de Ativação de Tag</h2>
+                            <h2 style="font-size: 1.5rem;">Dados do Usuário</h2>
                         </span>
                         <button class="close" @click="closeModal">X</button>
                     </div>
                     <div class="subtitle">
-                        <p>Você está prestes a ativar uma tag. Por favor, confirme os detalhes abaixo.</p>
+                        <p>Por favor, confirme os detalhes abaixo.</p>
                     </div>
                 </div>
                 <div class="info">
-                    <p>Id da Tag: <span>{{ objectSelected.id }}</span></p>
-                    <p>RFID: <span>{{ objectSelected.rfid }}</span></p>
-                    <p>Status: <span>{{ objectSelected.valid ? 'Ativo' : 'Desativado' }}</span></p>
+                    <p>Id: <span>{{ objectSelected.id }}</span></p>
+                    <p>Usuário: <span>{{ objectSelected.name }}</span></p>
+                    <p>Email: <span>{{ objectSelected.email }}</span></p>
+                    <p>isSuper: <span>{{ objectSelected.isSuper }}</span></p>
+                    <p>isVerified: <span>{{ objectSelected.isVerified }}</span></p>
                 </div>
             </div>
             <div class="buttons">
-                <HoverButton text="Excluir" color="red" hoverTextColor="white" @click="closeModal" />
-                <HoverButton text="Confirmar" color="green" hoverTextColor="white" />
+                <HoverButton text="EXCLUIR" color="red" hoverTextColor="white"
+                    @click="closeModal, usersStore.deleteUser(Number(objectSelected.id))" />
+                <HoverButton text="VERIFICAR" color="green" hoverTextColor="white" v-if="!objectSelected.isVerified" />
+                <HoverButton text="ADMIN" color="blue" hoverTextColor="white" v-if="!objectSelected.isSuper" />
             </div>
         </section>
     </main>
@@ -108,7 +118,6 @@ button.close {
 
 .subtitle {
     display: flex;
-    justify-content: center;
     align-items: center;
     color: #6d6d6d;
 }

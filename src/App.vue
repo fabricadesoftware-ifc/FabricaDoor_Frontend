@@ -1,11 +1,11 @@
 <script setup>
 import { watch, onMounted } from 'vue';
-import { useStyleStore, useTagsStore, useAuthStore } from './stores';
+import { useStyleStore, useAuthStore } from './stores';
 import DarkLight from './components/global/Buttons/DarkLight.vue';
 import LoadingComp from './components/global/Cards/LoadingComp.vue';
 
 const store = useStyleStore();
-const tagsStore = useTagsStore();
+// const tagsStore = useTagsStore();
 const authStore = useAuthStore();
 
 function updateGlobalStyles() {

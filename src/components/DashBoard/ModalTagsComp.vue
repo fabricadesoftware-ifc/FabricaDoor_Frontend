@@ -10,6 +10,9 @@ const tagsStore = useTagsStore();
 
 const tags = computed(() => tagsStore.state.tags);
 
+const sortedTags = computed(() => {
+    return [...tags.value].sort((a, b) => b.valid - a.valid);
+});
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
@@ -22,12 +25,6 @@ const closeModal = () => {
     emit("update:isOpen", false);
 };
 
-// const orderedTags = computed(() => {
-//     return [...tags.value].sort((a) => {
-//         return a.status === 'Desativado' ? -1 : 1;
-//     });
-// });
-
 const showModal = ref(false);
 const selected = ref({});
 
@@ -37,8 +34,10 @@ function openModal(item) {
 }
 </script>
 
+
 <template>
     <ModalComp v-model:isOpen="showModal" :objectSelected="selected" />
+
     <main v-if="isOpen">
         <section>
             <div class="title">
@@ -60,19 +59,18 @@ function openModal(item) {
                     <p>Usuario</p>
                     <p>Status</p>
                 </div>
-                <div v-for="(item, index) in tags" :key="index" class="ItemTags">
+                <div v-for="(item, index) in sortedTags" :key="index" class="ItemTags">
                     <p>{{ item.id }}</p>
                     <p>{{ item.rfid }}</p>
                     <span>
+                        <!-- Icone de status -->
                         <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
-
                         <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
-                        <p>{{ item.valid
-                            ? 'Ativo'
-                            : 'Desativado'
-                            }}</p>
 
-                        <HoverButton v-if="item.valid === 'Desativado'" text="Ativar" color="black"
+                        <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
+
+                        <!-- Botão de ativar tag caso esteja desativada -->
+                        <HoverButton v-if="!item.valid" text="Ativar" color="black"
                             hoverTextColor="white" @click="openModal(item)" />
                     </span>
                 </div>
@@ -80,6 +78,7 @@ function openModal(item) {
         </section>
     </main>
 </template>
+
 
 <style scoped>
 main {
@@ -92,7 +91,7 @@ main {
     top: 0;
     left: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 50;
     backdrop-filter: blur(5px);
 }
 
@@ -130,19 +129,13 @@ span {
     cursor: pointer;
 }
 
-
 .headerList {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    width: 55%;
+    width: 100%;
     color: #6d6d6d;
     padding: 0 1rem;
-    width: 100%;
-    position: sticky;
-    top: 0;
-    left: 0;
     border-bottom: 1px solid #ccc;
-    z-index: 1;
 }
 
 .list {
@@ -152,20 +145,16 @@ span {
     max-height: 450px;
     overflow-y: auto;
     width: 100%;
-    position: relative;
 }
 
 .ItemTags {
-    width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     border-bottom: 1px solid #ccc;
     height: 100px;
-    margin: 10px auto;
-    flex-direction: column;
-    color: black;
     padding: .5rem 1rem;
     align-items: center;
+    color: black;
 }
 
 .search {

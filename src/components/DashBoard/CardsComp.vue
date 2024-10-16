@@ -1,9 +1,22 @@
 <script setup>
+import { onMounted } from 'vue';
+import { useUsersStore, useTagsStore } from '@/stores';
+
+const usersStore = useUsersStore();
+const tagsStore = useTagsStore();
+
 import CardUtils from '../global/Cards/CardUtils.vue';
 
 import TagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue';
 import Account from 'vue-material-design-icons/Account.vue';
 import DoorOpen from 'vue-material-design-icons/DoorOpen.vue';
+
+onMounted(async () => {
+    await usersStore.getUsers();
+    await tagsStore.getTags();
+    console.log(usersStore.state.users);
+});
+
 </script>
 
 <template>
@@ -12,8 +25,8 @@ import DoorOpen from 'vue-material-design-icons/DoorOpen.vue';
             Dashboard
         </div>
         <div class="cards">
-            <CardUtils :icon="TagMultipleOutline" title="Tags" number="10" />
-            <CardUtils :icon="Account" title="Usuários Ativos" number="10" />
+            <CardUtils :icon="TagMultipleOutline" title="Tags" :number="tagsStore.countTags" />
+            <CardUtils :icon="Account" title="Usuários Ativos" :number="usersStore.countUsers" />
             <CardUtils :icon="DoorOpen" title="Acessos Hoje" number="10" />
         </div>
     </section>

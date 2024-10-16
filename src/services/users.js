@@ -3,9 +3,9 @@ import api from '@/plugin/axios'
 class UsersService {
   async getUsers(token) {
     try {
-      const response = await api.get('auth/users', {
+      const response = await api.get('user/users', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
       })
       return response.data
@@ -16,11 +16,15 @@ class UsersService {
 
   async createUsers(token, data) {
     try {
-      const response = await api.post('auth/users',{
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      }, data)
+      const response = await api.post(
+        'user/users',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        },
+        data
+      )
       return response.data
     } catch (error) {
       console.error(error)
@@ -29,11 +33,15 @@ class UsersService {
 
   async updateUsers(token, data) {
     try {
-      const response = await api.put(`auth/users`,{
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      }, data)
+      const response = await api.put(
+        `user/users`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        },
+        data
+      )
       return response.data
     } catch (error) {
       console.error(error)
@@ -41,10 +49,11 @@ class UsersService {
   }
 
   async deleteUsers(token, id) {
+    console.log(id)
     try {
-      const response = await api.delete(`auth/users${id}/`, {
+      const response = await api.delete(`user/users/${id}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
       })
       return response.data
