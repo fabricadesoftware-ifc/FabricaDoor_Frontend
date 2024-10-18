@@ -1,9 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useTagsStore } from '@/stores';
-import ModalComp from './ModalComp.vue';
-import ModalTagsComp from './ModalTagsComp.vue';
-import ArrowExpand from "vue-material-design-icons/ArrowExpand.vue";
+import { ModalComp, ModalTagsComp } from '..';
+import { ArrowExpand } from '../icons';
 
 const tagsStore = useTagsStore();
 const tags = computed(() => tagsStore.state.tags);
@@ -17,11 +16,6 @@ const orderedTags = computed(() => {
 const showModal = ref(false);
 const showModalTags = ref(false);
 const selected = ref({});
-
-function openModal(item) {
-    selected.value = item;
-    showModal.value = true;
-}
 
 onMounted(async () => {
     await tagsStore.getTags();
@@ -54,7 +48,7 @@ onMounted(async () => {
                     <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
                     <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
 
-                    <HoverButton text="Ativar" color="green" hoverTextColor="white" v-if="!item.valid" @click="openModal(item)" />
+               
                 </span>
             </div>
         </div>

@@ -1,7 +1,5 @@
 <script setup>
-import InfoProfile from './InfoProfile.vue';
-import MyTags from './MyTags.vue';
-import MyLogs from './MyLogs.vue';
+import { InfoProfile, MyLogs, MyTags } from '..';
 </script>
 
 <template>

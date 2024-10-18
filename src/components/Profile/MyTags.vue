@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useTagsStore, useAuthStore } from '@/stores';
-import TagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue';
+import { TagMultipleOutline } from '../icons';
 const tagsStore = useTagsStore();
 const authStore = useAuthStore();
 

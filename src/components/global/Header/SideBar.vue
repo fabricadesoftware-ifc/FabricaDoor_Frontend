@@ -1,14 +1,10 @@
 <script setup>
-import ViewDashboard from 'vue-material-design-icons/ViewDashboard.vue'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import Account from 'vue-material-design-icons/Account.vue';
-
+import { ViewDashboard, Cog, Account } from '@/components/icons';
 import { useAuthStore } from '@/stores';
 
 const authStore = useAuthStore();
 
 </script>
-
 
 <template>
     <aside>

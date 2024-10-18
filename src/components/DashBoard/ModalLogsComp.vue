@@ -1,32 +1,54 @@
 <script setup>
-import { ref } from 'vue';
-import NoteTextOutline from 'vue-material-design-icons/NoteTextOutline.vue';
-import Magnify from 'vue-material-design-icons/Magnify.vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { Magnify, NoteTextOutline } from '../icons';
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
-    isOpen: Boolean,
+  isOpen: Boolean,
 });
 
 const emit = defineEmits(["update:isOpen"]);
 
 const closeModal = () => {
-    emit("update:isOpen", false);
+  emit("update:isOpen", false);
 };
 
 const tags = ref([
-    { id: 1, user: 'user1', status: 'Desativado' },
-    { id: 2, user: 'user2', status: 'Ativo' },
-    { id: 3, user: 'user3', status: 'Ativo' },
-    { id: 4, user: 'user4', status: 'Ativo' },
-    { id: 5, user: 'user5', status: 'Ativo' },
-    { id: 6, user: 'user6', status: 'Desativado' },
-    { id: 7, user: 'user7', status: 'Desativado' },
-    { id: 8, user: 'user8', status: 'Ativo' },
-    { id: 9, user: 'user9', status: 'Ativo' },
-    { id: 10, user: 'user10', status: 'Desativado' },
+  { id: 1, user: 'user1', status: 'Desativado' },
+  { id: 2, user: 'user2', status: 'Ativo' },
+  { id: 3, user: 'user3', status: 'Ativo' },
+  { id: 4, user: 'user4', status: 'Ativo' },
+  { id: 5, user: 'user5', status: 'Ativo' },
+  { id: 6, user: 'user6', status: 'Desativado' },
+  { id: 7, user: 'user7', status: 'Desativado' },
+  { id: 8, user: 'user8', status: 'Ativo' },
+  { id: 9, user: 'user9', status: 'Ativo' },
+  { id: 10, user: 'user10', status: 'Desativado' },
 ]);
 
+const handleClickOutside = (event) => {
+  if (event.target.closest('section') === null) {
+    closeModal();
+  }
+};
+
+const handleEscKey = (event) => {
+  if (event.key === 'Escape') {
+    closeModal();
+  }
+};
+
+// Add event listeners when the component is mounted
+onMounted(() => {
+  window.addEventListener('click', handleClickOutside);
+  window.addEventListener('keydown', handleEscKey);
+});
+
+// Remove event listeners when the component is unmounted
+onUnmounted(() => {
+  window.removeEventListener('click', handleClickOutside);
+  window.removeEventListener('keydown', handleEscKey);
+});
 </script>
 
 <template>

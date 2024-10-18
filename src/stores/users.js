@@ -36,11 +36,14 @@ export const useUsersStore = defineStore('users', () => {
     }
   }
 
-  const updateUsers = async (user) => {
+  const updateUser = async (user) => {
     state.loading = true
+    console.log(user)
+    console.log(token)
     try {
-      const index = state.users.results.findIndex((s) => s.id === user.id)
-      state.users[index] = await UsersService.updateUsers(token, user)
+      const index = state.users.data?.users.findIndex((s) => s.id === user.id)
+      state.users[index] = await UsersService.updateUser(token, user)
+      window.location.reload()
     } catch (error) {
       state.error = error
     } finally {
@@ -70,7 +73,7 @@ export const useUsersStore = defineStore('users', () => {
     countUsers,
     getUsers,
     createUsers,
-    updateUsers,
+    updateUser,
     deleteUser
   }
 })

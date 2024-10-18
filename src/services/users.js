@@ -18,12 +18,12 @@ class UsersService {
     try {
       const response = await api.post(
         'user/users',
+        data, // data precisa vir primeiro
         {
           headers: {
             Authorization: `Bearer ${token}`
           }
-        },
-        data
+        }
       )
       return response.data
     } catch (error) {
@@ -31,16 +31,16 @@ class UsersService {
     }
   }
 
-  async updateUsers(token, data) {
+  async updateUser(token, data) {
     try {
       const response = await api.put(
-        `user/users`,
+        `user/users/${data.id}`,
+        data, // data precisa vir primeiro
         {
           headers: {
             Authorization: `Bearer ${token}`
           }
-        },
-        data
+        }
       )
       return response.data
     } catch (error) {
@@ -49,7 +49,6 @@ class UsersService {
   }
 
   async deleteUsers(token, id) {
-    console.log(id)
     try {
       const response = await api.delete(`user/users/${id}`, {
         headers: {

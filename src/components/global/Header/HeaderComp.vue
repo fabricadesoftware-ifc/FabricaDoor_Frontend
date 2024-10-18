@@ -1,9 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import LockOutline from 'vue-material-design-icons/LockOutline.vue';
-import LockOpenOutline from 'vue-material-design-icons/LockOpenOutline.vue';
-import Menu from 'vue-material-design-icons/Menu.vue';
-import SideBar from './SideBar.vue';
+import { SideBar } from '@/components';
+import { LockOpenOutline, LockOutline,  Menu } from '@/components/icons';
 import { useAuthStore } from '@/stores';
 
 const authStore = useAuthStore();

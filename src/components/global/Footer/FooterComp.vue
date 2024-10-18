@@ -1,15 +1,15 @@
 <script setup>
-import Help from "vue-material-design-icons/Help.vue";
+    import  { Help } from '@/components/icons';
 </script>
 
 <template>
     <footer>
         <div class="container">
             <div class="logo">
-                <img src="/public//ifcLogoGreen.png" width="50%" alt="">
+                <img src="/public/ifcLogoGreen.png" width="50%" alt="">
                 <img src="/public/logoFabrica.png" alt="">
             </div>
-            <router-link class="support">
+            <router-link to="/login" class="support">
                 <div class="icon">
                     <Help />
                 </div>

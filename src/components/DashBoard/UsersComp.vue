@@ -1,47 +1,64 @@
 <script setup>
-import {  ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { ModalUserComp, HoverButton } from '..';
 import { useUsersStore } from '@/stores';
-import Account from 'vue-material-design-icons/Account.vue';
-import CheckCircle from 'vue-material-design-icons/CheckCircle.vue';
-import Magnify from 'vue-material-design-icons/Magnify.vue';
+import { Cancel, Magnify, Account, CheckCircle } from '../icons';
 
-
-import Cancel from 'vue-material-design-icons/Cancel.vue';
-import HoverButton from '../global/Buttons/HoverButton.vue';
-
-import ModalUserComp from './ModalUserComp.vue';
-
-const iconComponents = {
-    CheckCircle,
-    Cancel
-};
+const iconComponents = { CheckCircle, Cancel };
 
 const usersStore = useUsersStore();
 const showModal = ref(false);
 const selected = ref({});
+const searchTerm = ref('');
 
 function openModal(data) {
     showModal.value = true;
     selected.value = data;
 }
 
+const closeModal = () => {
+    showModal.value = false;
+};
 
+const handleEscapeKey = (event) => {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+};
+
+
+onMounted(() => {
+    window.addEventListener('keydown', handleEscapeKey);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleEscapeKey);
+});
+
+const filteredUsers = computed(() => {
+    if (!searchTerm.value) return usersStore.state.users.data?.users || [];
+    return usersStore.state.users.data?.users.filter(user =>
+        user.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+    ) || [];
+});
 </script>
 
 <template>
     <ModalUserComp v-model:isOpen="showModal" :object-selected="selected" />
+
     <section>
         <div class="title">
             <h2>Usuários:
                 <Account />
             </h2>
             <span>
-                    <div class="search">
-                        <Magnify />
-                        <input type="text" />
-                    </div>
-                </span>
+                <div class="search">
+                    <Magnify />
+                    <input type="text" placeholder="Buscar..." v-model="searchTerm" />
+                </div>
+            </span>
         </div>
+
         <div class="user-list">
             <div class="headerList">
                 <p>ID</p>
@@ -51,13 +68,14 @@ function openModal(data) {
                 <p>Verificado</p>
                 <p>Ações</p>
             </div>
-            <div v-for="user in usersStore.state.users.data?.users" :key="user.id" class="user-item">
+
+            <div v-for="user in filteredUsers" :key="user.id" class="user-item">
                 <p>{{ user.id }}</p>
                 <p>{{ user.name }}</p>
                 <p>{{ user.email }}</p>
                 <p style="display: flex; align-items: center; gap: 0.5rem;">
                     <component :is="iconComponents[user.isSuper ? 'CheckCircle' : 'Cancel']" width="20" height="20" />
-                    {{ user.isVerified ? 'Sim' : 'Não' }}
+                    {{ user.isSuper ? 'Sim' : 'Não' }}
                 </p>
                 <p style="display: flex; align-items: center; gap: 0.5rem;">
                     <component :is="iconComponents[user.isVerified ? 'CheckCircle' : 'Cancel']" width="20"
@@ -65,8 +83,7 @@ function openModal(data) {
                     {{ user.isVerified ? 'Sim' : 'Não' }}
                 </p>
                 <p class="buttons">
-                    <HoverButton text="Editar" :color="'green'" :hover-text-color="'green'" @click="openModal(user)">
-                    </HoverButton>
+                    <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'" @click="openModal(user)" />
                 </p>
             </div>
         </div>

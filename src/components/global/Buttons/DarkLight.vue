@@ -1,5 +1,5 @@
 <script setup>
-import ThemeLightDark from "vue-material-design-icons/ThemeLightDark.vue";
+import { ThemeLightDark } from '@/components/icons';
 </script>
 
 <template>

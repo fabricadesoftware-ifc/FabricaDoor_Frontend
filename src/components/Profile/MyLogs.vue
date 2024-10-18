@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useTagsStore, useAuthStore } from '@/stores';
-import NoteTextOutline from 'vue-material-design-icons/NoteTextOutline.vue';
+import { NoteTextOutline } from '../icons';
 const tagsStore = useTagsStore();
 const authStore = useAuthStore();
 

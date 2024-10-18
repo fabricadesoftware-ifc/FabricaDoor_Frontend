@@ -87,10 +87,23 @@ export const useTagsStore = defineStore('tags', () => {
     }
   }
 
+  const verifyTag = async (tagId) =>{
+    state.loading = true
+    try {
+      const response = await TagsService.verifyTag(token, tagId)
+      return response.data
+    } catch (error) {
+      state.error = error
+    } finally {
+      state.loading = false
+    }
+  }
+
   return {
     state,
     isLoading,
     countTags,
+    verifyTag,
     getTags,
     getMyTags,
     createTags,

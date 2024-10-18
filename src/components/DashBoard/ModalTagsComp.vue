@@ -1,17 +1,18 @@
 <script setup>
-import { ref, computed } from 'vue';
-import TagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue';
-import ModalComp from './ModalComp.vue';
-import HoverButton from '../global/Buttons/HoverButton.vue';
-import Magnify from 'vue-material-design-icons/Magnify.vue';
-
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ModalComp, HoverButton, AssignUserTagComp } from '..';
+import { Magnify, TagMultipleOutline } from '../icons';
 import { useTagsStore } from '@/stores';
+
+
 const tagsStore = useTagsStore();
 
 const tags = computed(() => tagsStore.state.tags);
+const searchTerm = ref(""); 
 
-const sortedTags = computed(() => {
-    return [...tags.value].sort((a, b) => b.valid - a.valid);
+const filteredTags = computed(() => {
+    return [...tags.value]
+        .filter(tag => tag.rfid.toLowerCase().includes(searchTerm.value.toLowerCase())).sort((a, b) => b.valid - a.valid); 
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -26,19 +27,45 @@ const closeModal = () => {
 };
 
 const showModal = ref(false);
+const showModalTags = ref(false);
 const selected = ref({});
 
-function openModal(item) {
+const closeOnBackdrop = (event) => {
+    if (event.target === event.currentTarget) {
+        closeModal();
+    }
+};
+
+const handleEscapeKey = (event) => {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+};
+
+onMounted(() => {
+    window.addEventListener('keydown', handleEscapeKey);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleEscapeKey);
+});
+
+function openModalValid(item) {
     selected.value = item;
     showModal.value = true;
 }
-</script>
 
+function openModalTag(item) {
+    selected.value = item;
+    showModalTags.value = true;
+}
+</script>
 
 <template>
     <ModalComp v-model:isOpen="showModal" :objectSelected="selected" />
+    <AssignUserTagComp v-model:isOpen="showModalTags" :object-selected="selected" />
 
-    <main v-if="isOpen">
+    <main v-if="isOpen" @click="closeOnBackdrop">
         <section>
             <div class="title">
                 <div style="display: flex; gap: 1rem; align-items: center;">
@@ -48,37 +75,41 @@ function openModal(item) {
                 <span>
                     <div class="search">
                         <Magnify />
-                        <input type="text" />
+                        <input type="text" v-model="searchTerm" placeholder="Pesquisar Tag" />
                     </div>
                     <button class="close" @click="closeModal">X</button>
                 </span>
             </div>
-            <div class="list">
+            <div class="list-container">
                 <div class="headerList">
                     <p>Id da Tag</p>
                     <p>Usuario</p>
+                    <p>RFID</p>
                     <p>Status</p>
                 </div>
-                <div v-for="(item, index) in sortedTags" :key="index" class="ItemTags">
-                    <p>{{ item.id }}</p>
-                    <p>{{ item.rfid }}</p>
-                    <span>
-                        <!-- Icone de status -->
-                        <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
-                        <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
+                <div class="list">
+                    <div v-for="(item, index) in filteredTags" :key="index" class="ItemTags">
+                        <p>{{ item.id }}</p>
+                        <p>{{ item.user?.name ? item.user?.name : "Não Atribuido" }}</p>
+                        <p>{{ item.rfid }}</p>
+                        <span>
+                            <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
+                            <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
+                            <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
+                            <HoverButton v-if="!item.valid && item.user?.name" text="Ativar" color="black"
+                                hoverTextColor="white" @click="openModalValid(item)" />
 
-                        <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
+                            <HoverButton v-if="!item.valid && !item.user?.name" text="Atribuir" color="black"
+                                hoverTextColor="white" @click="openModalTag(item)" />
 
-                        <!-- Botão de ativar tag caso esteja desativada -->
-                        <HoverButton v-if="!item.valid" text="Ativar" color="black"
-                            hoverTextColor="white" @click="openModal(item)" />
-                    </span>
+
+                        </span>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 </template>
-
 
 <style scoped>
 main {
@@ -103,8 +134,6 @@ section {
     padding: 3rem 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    justify-content: space-between;
     box-shadow: 0 0 10px 0 #00000083;
     z-index: 1;
 }
@@ -129,27 +158,38 @@ span {
     cursor: pointer;
 }
 
+.list-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
 .headerList {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     width: 100%;
     color: #6d6d6d;
     padding: 0 1rem;
     border-bottom: 1px solid #ccc;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 450px;
+    max-height: 100%;
     overflow-y: auto;
     width: 100%;
 }
 
 .ItemTags {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     border-bottom: 1px solid #ccc;
     height: 100px;
     padding: .5rem 1rem;

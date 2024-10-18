@@ -1,7 +1,6 @@
 <script setup>
 import { reactive, ref } from 'vue';
-import LockOutline from 'vue-material-design-icons/LockOutline.vue';
-import LockOpenOutline from 'vue-material-design-icons/LockOpenOutline.vue';
+import { LockOutline, LockOpenOutline } from '../icons';
 import { useAuthStore } from '@/stores';
 
 const isHovered = ref(false);

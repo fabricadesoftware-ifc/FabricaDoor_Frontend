@@ -1,22 +1,17 @@
 <script setup>
 import { onMounted } from 'vue';
+import { CardUtils } from '..';
 import { useUsersStore, useTagsStore } from '@/stores';
+import { TagMultipleOutline, Account, DoorOpen } from '../icons';
 
 const usersStore = useUsersStore();
 const tagsStore = useTagsStore();
-
-import CardUtils from '../global/Cards/CardUtils.vue';
-
-import TagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue';
-import Account from 'vue-material-design-icons/Account.vue';
-import DoorOpen from 'vue-material-design-icons/DoorOpen.vue';
 
 onMounted(async () => {
     await usersStore.getUsers();
     await tagsStore.getTags();
     console.log(usersStore.state.users);
 });
-
 </script>
 
 <template>

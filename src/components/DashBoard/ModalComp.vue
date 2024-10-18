@@ -1,8 +1,10 @@
 <script setup>
 import { onMounted, onBeforeUnmount } from 'vue';
-import AlertOutline from "vue-material-design-icons/AlertOutline.vue";
-import HoverButton from "../global/Buttons/HoverButton.vue";
+import { HoverButton } from '..';
+import { AlertOutline } from '../icons';
+import { useTagsStore } from '@/stores';
 
+const tagsStore = useTagsStore();
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
     isOpen: Boolean,
@@ -59,8 +61,8 @@ const closeOnBackdrop = (event) => {
                 </div>
             </div>
             <div class="buttons">
-                <HoverButton text="Excluir" color="red" hoverTextColor="white" @click="closeModal" />
-                <HoverButton text="Confirmar" color="green" hoverTextColor="white" />
+                <HoverButton text="Excluir" color="red" hoverTextColor="white" @click="tagsStore.deleteTags(props.objectSelected?.id)" />
+                <HoverButton text="Confirmar" color="green" hoverTextColor="white" @click="tagsStore.verifyTag(props.objectSelected?.id)" />
             </div>
         </section>
     </main>

@@ -1,11 +1,11 @@
 <script setup>
-import { onMounted, onBeforeUnmount } from "vue";
-import AlertOutline from "vue-material-design-icons/AlertOutline.vue";
-import HoverButton from "../global/Buttons/HoverButton.vue";
+import { ref, watch } from "vue";
+import { HoverButton } from "..";
 import { useUsersStore } from "@/stores";
+import { AlertOutline } from "../icons";
+
 const usersStore = useUsersStore();
 
-// eslint-disable-next-line no-unused-vars
 const props = defineProps({
     isOpen: Boolean,
     objectSelected: Object,
@@ -13,33 +13,28 @@ const props = defineProps({
 
 const emit = defineEmits(["update:isOpen"]);
 
+// Criar estado local para armazenar os dados do objeto selecionado
+const localObject = ref({ ...props.objectSelected });
+
+// Atualizar estado local quando a prop mudar
+watch(() => props.objectSelected, (newObject) => {
+    localObject.value = { ...newObject };
+});
+
+// Fechar modal
 const closeModal = () => {
     emit("update:isOpen", false);
 };
 
-// Fecha o modal ao clicar fora dele
-const handleClickOutside = (event) => {
-    if (event.target.classList.contains("modal-background")) {
-        closeModal();
-    }
-};
-
-// Fecha o modal ao pressionar Esc
-const handleKeydown = (event) => {
-    if (event.key === "Escape") {
-        closeModal();
-    }
-};
-
-onMounted(() => {
-    document.addEventListener("keydown", handleKeydown);
-    document.addEventListener("click", handleClickOutside);
-});
-
-onBeforeUnmount(() => {
-    document.removeEventListener("keydown", handleKeydown);
-    document.removeEventListener("click", handleClickOutside);
-});
+// Atualizar dados do usuário no backend
+// const updateUser = async () => {
+//     try {
+//         await usersStore.updateUser(localObject.value.id, localObject.value);
+//         closeModal(); // Fechar modal após a atualização
+//     } catch (error) {
+//         console.error("Erro ao atualizar usuário:", error);
+//     }
+// };
 </script>
 
 <template>
@@ -59,18 +54,34 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
                 <div class="info">
-                    <p>Id: <span>{{ objectSelected.id }}</span></p>
-                    <p>Usuário: <span>{{ objectSelected.name }}</span></p>
-                    <p>Email: <span>{{ objectSelected.email }}</span></p>
-                    <p>isSuper: <span>{{ objectSelected.isSuper }}</span></p>
-                    <p>isVerified: <span>{{ objectSelected.isVerified }}</span></p>
+                    <p>Id: <span>{{ localObject.id }}</span></p>
+                    <p>Usuário: 
+                        <span>
+                            <input v-model="localObject.name" type="text" :placeholder="objectSelected.name" class="showData">
+                        </span>
+                    </p>
+                    <p>Email: 
+                        <span>
+                            <input v-model="localObject.email" type="text" :placeholder="objectSelected.email" class="showData">
+                        </span>
+                    </p>
+                    <p>isSuper: 
+                        <span>
+                            <input v-model="localObject.isSuper" type="checkbox" />
+                        </span>
+                    </p>
+                    <p>isVerified: 
+                        <span>
+                            <input v-model="localObject.isVerified" type="checkbox" />
+                        </span>
+                    </p>
                 </div>
             </div>
             <div class="buttons">
                 <HoverButton text="EXCLUIR" color="red" hoverTextColor="white"
                     @click="closeModal, usersStore.deleteUser(Number(objectSelected.id))" />
-                <HoverButton text="VERIFICAR" color="green" hoverTextColor="white" v-if="!objectSelected.isVerified" />
-                <HoverButton text="ADMIN" color="blue" hoverTextColor="white" v-if="!objectSelected.isSuper" />
+                <HoverButton text="ATUALIZAR" color="green" hoverTextColor="white" @click="usersStore.updateUser(localObject)" />
+            
             </div>
         </section>
     </main>
@@ -89,6 +100,20 @@ main {
     position: fixed;
     z-index: 200 !important;
     backdrop-filter: blur(5px);
+}
+
+input.showData{
+    border: 0;
+    width: 60%;
+}
+
+input.showData:focus{
+    outline: none;
+    border-bottom: 2px solid #6d6d6d;
+}
+
+input.showData::placeholder {
+    color: black;
 }
 
 section {
@@ -133,6 +158,13 @@ button.close {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
+}
+
+.title>span {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 span {
@@ -153,6 +185,7 @@ span {
     display: flex;
     flex-direction: column;
     gap: .5rem;
+    width: 100%;
 }
 
 .info>p {
@@ -160,9 +193,14 @@ span {
     gap: 1rem;
     align-items: center;
     font-weight: 500;
+    width: 100%;
+    height: 30px;
 }
 
 p>span {
     font-weight: 400;
+    width: 100%;
+    display: flex;
+    justify-content: start;
 }
 </style>

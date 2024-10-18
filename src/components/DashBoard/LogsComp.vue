@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import ArrowExpand from "vue-material-design-icons/ArrowExpand.vue";
-import ModalLogsComp from './ModalLogsComp.vue';
+import { ModalLogsComp } from '..';
+import { ArrowExpand } from '@/components/icons';
 
 const showModalLogs = ref(false);
 

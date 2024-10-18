@@ -1,8 +1,8 @@
 <script setup>
 import { useAuthStore, useDoorStore } from '@/stores';
+import { OpenDoor } from '..';
 const authStore = useAuthStore();
 const doorStore = useDoorStore();
-import OpenDoor from '../global/Buttons/OpenDoor.vue';
 
 const ShowDataUsedTimes = (data) => {
 
