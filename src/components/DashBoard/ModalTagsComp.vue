@@ -96,13 +96,12 @@ function openModalTag(item) {
                             <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
                             <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
                             <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
-                            <HoverButton v-if="!item.valid && item.user?.name" text="Ativar" color="black"
-                                hoverTextColor="white" @click="openModalValid(item)" />
+                            <HoverButton v-if="!item.valid && item.user?.name" text="Ativar" color="black" hoverTextColor="white" @click="openModalValid(item)" />
 
-                            <HoverButton v-if="!item.valid && !item.user?.name" text="Atribuir" color="black"
+                            <HoverButton v-if="item.valid && item.user?.name" text="Desativar" color="black" hoverTextColor="white" @click="openModalValid(item)" />
+
+                            <HoverButton v-if="!item.valid && !item.user?.name" text="Desatribuir" color="black"
                                 hoverTextColor="white" @click="openModalTag(item)" />
-
-
                         </span>
                     </div>
                 </div>

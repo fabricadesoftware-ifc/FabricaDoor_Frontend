@@ -46,7 +46,7 @@ const closeOnBackdrop = (event) => {
                     <div class="title">
                         <span>
                             <AlertOutline :size="30" />
-                            <h2 style="font-size: 1rem;">Confirmação de Ativação de Tag</h2>
+                            <h2 style="font-size: 1rem;">Confirmação de {{ props.objectSelected?.valid ? 'Desativação' : 'Ativação' }} de Tag</h2>
                         </span>
                         <button class="close" @click="closeModal">X</button>
                     </div>
@@ -62,7 +62,8 @@ const closeOnBackdrop = (event) => {
             </div>
             <div class="buttons">
                 <HoverButton text="Excluir" color="red" hoverTextColor="white" @click="tagsStore.deleteTags(props.objectSelected?.id)" />
-                <HoverButton text="Confirmar" color="green" hoverTextColor="white" @click="tagsStore.verifyTag(props.objectSelected?.id)" />
+
+                <HoverButton :text="props.objectSelected?.valid ? 'Desativar' : 'Ativar'" :color="props.objectSelected?.valid ? 'red' : 'green'" hoverTextColor="white" @click="tagsStore.verifyTag(props.objectSelected?.id)" />
             </div>
         </section>
     </main>
