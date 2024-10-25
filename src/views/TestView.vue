@@ -28,13 +28,13 @@ async function liveMode(){
 }
 
 async function update(){
-    axios.get('http://localhost:8087/api/logs/')
-        .then((response) => {
-        logs.value = response.data.data;
-        })
-        .catch((error) => {
-        console.error('Erro ao buscar logs:', error);
-        });
+  try{
+    const response = await axios.get('http://localhost:8087/api/logs/')
+    logs.value = response.data.data;
+  }
+  catch(error){
+    console.error('Erro ao buscar logs:', error);
+  } 
 }
 
 onBeforeUnmount(() => {
