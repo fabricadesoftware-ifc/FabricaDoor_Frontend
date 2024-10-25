@@ -53,7 +53,7 @@ button:hover::before {
 }
 
 button:hover {
-    color: white !important;
+    color: var(--button-hover-text-color) !important;
     background-color: var(--button-color) !important;
 }
 

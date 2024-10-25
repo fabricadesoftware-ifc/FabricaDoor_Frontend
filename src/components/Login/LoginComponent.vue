@@ -1,4 +1,4 @@
-<script setup>
+ <script setup>
 import { reactive, ref } from 'vue';
 import { LockOutline, LockOpenOutline } from '../icons';
 import { useAuthStore } from '@/stores';
