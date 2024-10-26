@@ -52,6 +52,15 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const register = async (data) => {
+    try {
+      const response = await AuthService.register(data)
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const logout = async () => {
     try {
       authUser.value = {}
@@ -67,6 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
     authUser,
     logout,
     login,
+    register,
     isLoading
   }
 })

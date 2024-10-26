@@ -1,23 +1,25 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
-import { ModalUserComp, HoverButton } from '..';
+import { ModalUserComp, HoverButton, ModalAddUser } from '..';
 import { useUsersStore } from '@/stores';
 import { Cancel, Magnify, Account, CheckCircle } from '../icons';
 
 const iconComponents = { CheckCircle, Cancel };
 
 const usersStore = useUsersStore();
-const showModal = ref(false);
+const showModalUser = ref(false);
+const showModalAddUser = ref(false);
 const selected = ref({});
 const searchTerm = ref('');
 
-function openModal(data) {
-    showModal.value = true;
+function openModalUser(data) {
+    showModalUser.value = true;
     selected.value = data;
 }
 
 const closeModal = () => {
-    showModal.value = false;
+    showModalUser.value = false;
+    showModalAddUser.value = false;
 };
 
 const handleEscapeKey = (event) => {
@@ -44,18 +46,20 @@ const filteredUsers = computed(() => {
 </script>
 
 <template>
-    <ModalUserComp v-model:isOpen="showModal" :object-selected="selected" />
+    <ModalUserComp v-model:isOpen="showModalUser" :object-selected="selected" />
+    <ModalAddUser v-model:isOpen="showModalAddUser" />
 
     <section>
         <div class="title">
             <h2>Usuários:
                 <Account />
-            </h2>
-            <span>
                 <div class="search">
                     <Magnify />
                     <input type="text" placeholder="Buscar..." v-model="searchTerm" />
                 </div>
+            </h2>
+            <span>
+                <HoverButton text="Add" :color="'black'" :hover-text-color="'white'" @click="showModalAddUser = !showModalAddUser" />
             </span>
         </div>
 
@@ -83,7 +87,7 @@ const filteredUsers = computed(() => {
                     {{ user.isVerified ? 'Sim' : 'Não' }}
                 </p>
                 <p class="buttons">
-                    <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'" @click="openModal(user)" />
+                    <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'" @click="openModalUser(user)" />
                 </p>
             </div>
         </div>
@@ -179,5 +183,10 @@ span {
 
 .search>input:focus {
     outline: none;
+}
+
+button.add{
+    border-radius: 20%;
+    width: 2.5rem;
 }
 </style>

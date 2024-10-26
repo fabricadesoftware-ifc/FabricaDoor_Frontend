@@ -7,7 +7,7 @@ import axios from 'axios'
 const logs = ref([])
 const on = ref(false)
 
-const socket = io('http://localhost:8087', { autoConnect: false }) // Não conectar automaticamente
+const socket = io('http://192.168.1.10:8087', { autoConnect: false }) // Não conectar automaticamente
 
 const handleLogs = (data) => {
   console.log('Novos logs recebidos:', data)
@@ -29,7 +29,7 @@ async function liveMode() {
 
 async function update() {
   try {
-    const response = await axios.get('http://localhost:8087/api/logs/')
+    const response = await axios.get('http://192.168.1.10:8087/api/logs/')
     logs.value = response.data.data.reverse() // Reverter apenas no momento de carregar
   } catch (error) {
     console.error('Erro ao buscar logs:', error)

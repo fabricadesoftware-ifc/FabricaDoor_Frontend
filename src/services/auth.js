@@ -12,7 +12,7 @@ class AuthService {
 
   async register(data) {
     try {
-      const response = await api.post("register/", data);
+      const response = await api.post("auth/register/", data);
       return response.data;
     } catch (error) {
       console.error(error);

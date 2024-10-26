@@ -20,6 +20,7 @@ import InfoProfile from "./Profile/InfoProfile.vue"
 import MyLogs from "./Profile/MyLogs.vue"
 import MyTags from "./Profile/MyTags.vue"
 import ProfileMain from "./Profile/ProfileMain.vue"
+import ModalAddUser from "./DashBoard/ModalAddUser.vue"
 
 export {
     AssignUserTagComp,
@@ -43,5 +44,6 @@ export {
     InfoProfile,
     MyLogs,
     MyTags,
-    ProfileMain
+    ProfileMain,
+    ModalAddUser
 }
