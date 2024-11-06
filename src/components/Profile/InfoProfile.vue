@@ -1,6 +1,7 @@
 <script setup>
 import { useAuthStore, useDoorStore } from '@/stores';
 import { OpenDoor } from '..';
+import { debounce } from 'lodash';
 const authStore = useAuthStore();
 const doorStore = useDoorStore();
 
@@ -25,6 +26,10 @@ const ShowDataUsedTimes = (data) => {
 
 }
 
+const handleOpenDoor = debounce(() => {
+    doorStore.openDoor(authStore.$state.authUser.token);
+}, 200); 
+
 </script>
 
 <template>
@@ -46,7 +51,8 @@ const ShowDataUsedTimes = (data) => {
                     </span>
                 </div>
             </div>
-            <OpenDoor @click="doorStore.openDoor(authStore.$state.authUser.token)" />
+            <OpenDoor @click="handleOpenDoor" />
+
         </div>
     </article>
 </template>

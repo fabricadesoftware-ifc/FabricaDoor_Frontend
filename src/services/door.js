@@ -3,7 +3,8 @@ import api from '@/plugin/axios'
 class DoorService {
   async openDoor(token) {
     try {
-      const response = await api.get('http://192.168.1.10:8087/api/door/open', {
+      console.log("opa")
+      const response = await api.get('door/open', {
         headers: {
           Authorization: `Bearer ${token}`
         }

@@ -2,6 +2,7 @@ import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { TagsService } from '@/services'
 import { useAuthStore } from './auth'
+import router from '@/router'
 
 export const useTagsStore = defineStore('tags', () => {
   const state = reactive({
@@ -46,16 +47,19 @@ export const useTagsStore = defineStore('tags', () => {
     }
   }
 
-  const createTags = async (newTag) => {
-    state.loading = true
-    try {
-      const createdTag = await TagsService.createTags(token, newTag)
-      state.tags.push(createdTag)
-    } catch (error) {
+  const assignTag = async (data) => {
+    try{
+      console.log(data)
+      const response = await TagsService.assignTag(token, data)
+      console.log(response.data)
+      return response.data
+    }
+    catch (error) {
       state.error = error
     } finally {
       state.loading = false
     }
+
   }
 
   const updateTags = async (tag) => {
@@ -80,6 +84,7 @@ export const useTagsStore = defineStore('tags', () => {
         state.tags.splice(index, 1)
       }
       await TagsService.deleteTags(token, id)
+      router.go(0)
     } catch (error) {
       state.error = error
     } finally {
@@ -106,8 +111,8 @@ export const useTagsStore = defineStore('tags', () => {
     verifyTag,
     getTags,
     getMyTags,
-    createTags,
     updateTags,
-    deleteTags
+    deleteTags,
+    assignTag
   }
 })

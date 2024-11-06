@@ -2,6 +2,7 @@ import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { UsersService } from '@/services'
 import { useAuthStore } from './auth'
+import router from '@/router'
 
 export const useUsersStore = defineStore('users', () => {
   const state = reactive({
@@ -29,6 +30,7 @@ export const useUsersStore = defineStore('users', () => {
     state.loading = true
     try {
       state.users.push(await UsersService.createUsers(token, newUser))
+      router.go(0)
     } catch (error) {
       state.error = error
     } finally {
@@ -43,7 +45,7 @@ export const useUsersStore = defineStore('users', () => {
     try {
       const index = state.users.data?.users.findIndex((s) => s.id === user.id)
       state.users[index] = await UsersService.updateUser(token, user)
-      window.location.reload()
+      router.go(0)
     } catch (error) {
       state.error = error
     } finally {
@@ -57,9 +59,8 @@ export const useUsersStore = defineStore('users', () => {
       console.log(id)
       const index = state.users.data?.users.findIndex((s) => s.id === id)
       state.users.data?.users.splice(index, 1)
-      const result = await UsersService.deleteUsers(token, id)
-      console.log(result)
-      window.location.reload()
+      await UsersService.deleteUsers(token, id)
+      router.go(0)
     } catch (error) {
       state.error = error
     } finally {

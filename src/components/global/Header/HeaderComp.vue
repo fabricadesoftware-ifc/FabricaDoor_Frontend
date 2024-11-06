@@ -30,7 +30,7 @@ const handleMouseLeave = () => {
             <nav>
                 <ul>
                     <li>
-                        <router-link to="/dashboard" v-if="authStore.authUser.isLogged">Dashboard</router-link>
+                        <router-link to="/dashboard" v-if="authStore.authUser.isLogged && authStore.">Dashboard</router-link>
                     </li>
                     <li>
                         <router-link to="/">Configurações</router-link>

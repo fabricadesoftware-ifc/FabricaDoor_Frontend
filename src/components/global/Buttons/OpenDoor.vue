@@ -9,6 +9,7 @@ const toggleSwitch = () => {
 
     isChecked.value = true;
     isDisabled.value = true;
+
     setTimeout(() => {
         isChecked.value = false;
     }, 600);
@@ -22,7 +23,7 @@ const toggleSwitch = () => {
 
 <template>
     <label class="switch">
-        <input type="checkbox" :checked="isChecked" @change="toggleSwitch" :disabled="isDisabled">
+        <input type="checkbox" :checked="isChecked" @click="toggleSwitch" :disabled="isDisabled">
         <div class="button">
             <div class="light"></div>
             <div class="dots"></div>

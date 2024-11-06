@@ -1,14 +1,16 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, reactive, watch } from 'vue';
 import { useUsersStore } from '@/stores';
 import { HoverButton } from '..';
 import { AlertOutline } from '../icons';
+import { useTagsStore } from '@/stores';
 
 const usersStore = useUsersStore();
+const tagsStore = useTagsStore();
 
 const props = defineProps({
   isOpen: Boolean,
-  objectSelected: Object, // Objeto passado pelas props
+  objectSelected: Object,
 });
 
 const emit = defineEmits(["update:isOpen"]);
@@ -17,7 +19,6 @@ const closeModal = () => {
   emit("update:isOpen", false);
 };
 
-// Fecha modal com a tecla 'Escape'
 const handleEscapeKey = (event) => {
   if (event.key === 'Escape') {
     closeModal();
@@ -38,19 +39,19 @@ const closeOnBackdrop = (event) => {
   }
 };
 
-// Armazena o usuário selecionado e o status da tag
-const selectedUserId = ref(props.objectSelected.userId || ""); // ID do usuário da tag
-const isValid = ref(props.objectSelected.valid || false); // Status da tag (ativo ou desativado)
+const data = reactive({
+  rfid: null,
+  userId: 0,
+});
 
-// Função para salvar alterações no objeto
-// const saveChanges = () => {
-//   // Atualiza o objeto passado com o ID do usuário e status de validade
-//   props.objectSelected.userId = selectedUserId.value;
-//   props.objectSelected.valid = isValid.value;
-//   closeModal(); // Fecha o modal
-// };
+watch(
+  () => props.objectSelected,
+  (newVal) => {
+    data.rfid = String(newVal?.rfid) || null;
+  },
+  { immediate: true }
+);
 </script>
-
 <template>
   <main v-if="isOpen" @click="closeOnBackdrop">
     <section>
@@ -70,18 +71,16 @@ const isValid = ref(props.objectSelected.valid || false); // Status da tag (ativ
         <div class="info">
           <p>Id da Tag: <span>{{ objectSelected.id }}</span></p>
           <p>RFID: <span>{{ objectSelected.rfid }}</span></p>
-          <p>Status: 
+          <p>Status:
             <span>
-              <input type="checkbox" v-model="isValid" /> Ativo
+              <input type="checkbox" /> Ativo
             </span>
           </p>
           <p>
-            Usuário: 
+            Usuário:
             <span>
-              <select v-model="selectedUserId">
-                <option v-for="item in usersStore.state.users?.data.users" 
-                        :key="item.id" 
-                        :value="item.id">
+              <select v-model="data.userId">
+                <option v-for="item in usersStore.state.users?.data.users" :key="item.id" :value="item.id">
                   {{ item.name }}
                 </option>
               </select>
@@ -90,10 +89,10 @@ const isValid = ref(props.objectSelected.valid || false); // Status da tag (ativ
         </div>
       </div>
       <div class="buttons">
-        <HoverButton text="Excluir" color="red" hoverTextColor="white" @click="tagsStore.deleteTags(props.objectSelected?.id)" />
-        <HoverButton text="Confirmar" color="green" hoverTextColor="white"
-                     @click="saveChanges" />
-        
+        <HoverButton text="Excluir" color="red" hoverTextColor="white"
+          @click="tagsStore.deleteTags(props.objectSelected?.id)" />
+        <HoverButton text="Confirmar" color="green" hoverTextColor="white" @click="tagsStore.assignTag(data)" />
+
       </div>
     </section>
   </main>
