@@ -1,13 +1,16 @@
 <script setup>
+import api from '@/plugin/axios';
 import { ref, onBeforeUnmount } from 'vue'
 import { HoverButton, FooterComp, HeaderComp } from '@/components/';
 import { io } from 'socket.io-client'
-import axios from 'axios'
+import { useAuthStore } from '@/stores';
+
+const authStore = useAuthStore()
 
 const logs = ref([])
 const on = ref(false)
-
-const socket = io('http://localhost:19003', { autoConnect: false }) // Não conectar automaticamente
+console.log(api)
+const socket = io(import.meta.env.VITE_BACKEND_URL, { autoConnect: false }) // Não conectar automaticamente
 
 const handleLogs = (data) => {
   console.log('Novos logs recebidos:', data)
@@ -29,7 +32,11 @@ async function liveMode() {
 
 async function update() {
   try {
-    const response = await axios.get('http://localhost:19003/api/logs/')
+    const response = await api.get('logs/', {
+      headers: {
+        Authorization: `Bearer ${authStore.authUser.token}`
+      }
+    })
     logs.value = response.data.data.reverse()
     console.log('Logs atualizados:', response)
   } catch (error) {
