@@ -21,18 +21,17 @@ onMounted(async () => {
         </div>
         <div class="cards">
                 <ContentLoader v-if="tagsStore.isLoading" width="100%" height="120" :speed="2" :primaryColor="'#f3f5f3'" :secondaryColor="'#ecebeb'" style="border-radius: 17px;">
-                    <rect x="0" y="0" rx="3" ry="3" width="700" height="120" />
+                    <rect x="0" y="0" rx="3" ry="3" width="705" height="120" />
                 </ContentLoader>
                 <CardUtils v-else :icon="TagMultipleOutline" title="Tags" :number="tagsStore.countTags" />
 
-
                 <ContentLoader v-if="usersStore.isLoading" width="100%" height="120" :speed="2" :primaryColor="'#f3f5f3'" :secondaryColor="'#ecebeb'" style="border-radius: 17px;">
-                    <rect x="0" y="0" rx="3" ry="3" width="700" height="120" />
+                    <rect x="0" y="0" rx="3" ry="3" width="705" height="120" />
                 </ContentLoader>
                 <CardUtils v-else :icon="Account" title="Usuários Ativos" :number="usersStore.countUsers" />
 
                 <ContentLoader v-if="tagsStore.isLoading" width="100%" height="120" :speed="2" :primaryColor="'#f3f5f3'" :secondaryColor="'#ecebeb'" style="border-radius: 17px;">
-                    <rect x="0" y="0" rx="3" ry="3" width="700" height="120" />
+                    <rect x="0" y="0" rx="3" ry="3" width="705" height="120" />
                 </ContentLoader>
                 <CardUtils v-else :icon="DoorOpen" title="Acessos Hoje" :number="10" />
 
