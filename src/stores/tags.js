@@ -1,19 +1,29 @@
-import { reactive, computed } from 'vue'
+import { reactive, computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { TagsService } from '@/services'
 import { useAuthStore } from './auth'
 import router from '@/router'
+import { toast } from 'vue3-toastify'
 
 export const useTagsStore = defineStore('tags', () => {
   const state = reactive({
     tags: [],
     myTags: [],
-    loading: false,
+    loading: ref(false),
     error: null
   })
   const store = useAuthStore()
   const token = store.authUser.token
-  const countTags = computed(() => state.tags.length)
+  const countTags = computed(() => state.tags[0] ? state.tags.length : 0)
+
+  watch(
+    () => state.error,
+    (value) => {
+      if (value) {
+        toast.error(value) // Exibe a mensagem de erro no toast
+      }
+    }
+  )
 
   const isLoading = computed(() => state.loading)
 
@@ -31,8 +41,6 @@ export const useTagsStore = defineStore('tags', () => {
 
   const getMyTags = async (myId) => {
     state.loading = true
-    console.log('aoba')
-    console.log(myId)
     try {
       const response = await TagsService.getTags(token)
       console.log(response.data)

@@ -6,7 +6,7 @@ class AuthService {
       const response = await api.post("auth/login/", data);
       return response.data;
     } catch (error) {
-      console.error(error);
+      return error
     }
   }
 
@@ -15,25 +15,7 @@ class AuthService {
       const response = await api.post("auth/register/", data);
       return response.data;
     } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async logout() {
-    try {
-      const response = await api.post("logout/");
-      return response.data;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async getUser() {
-    try {
-      const response = await api.get("user/");
-      return response.data;
-    } catch (error) {
-      console.error(error);
+      return error
     }
   }
 }

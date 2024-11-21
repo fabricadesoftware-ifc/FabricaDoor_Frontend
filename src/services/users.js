@@ -1,7 +1,11 @@
 import api from '@/plugin/axios'
+import { useAuthStore } from '@/stores'
+
 
 class UsersService {
+  
   async getUsers(token) {
+    const authStore = useAuthStore()
     try {
       const response = await api.get('user/users', {
         headers: {
@@ -10,15 +14,19 @@ class UsersService {
       })
       return response.data
     } catch (error) {
-      console.error(error)
+      if (error.response.status === 403) {
+        authStore.logout()
+      }
+      return error
     }
   }
 
   async createUsers(token, data) {
+    const authStore = useAuthStore()
     try {
       const response = await api.post(
         'user/users',
-        data, // data precisa vir primeiro
+        data, 
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -27,15 +35,19 @@ class UsersService {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      if (error.response.status === 403) {
+        authStore.logout()
+      }
+      return error
     }
   }
 
   async updateUser(token, data) {
+    const authStore = useAuthStore()
     try {
       const response = await api.put(
         `user/users/${data.id}`,
-        data, // data precisa vir primeiro
+        data, 
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -44,11 +56,15 @@ class UsersService {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      if (error.response.status === 403) {
+        authStore.logout()
+      }
+      return error
     }
   }
 
   async deleteUsers(token, id) {
+    const authStore = useAuthStore()
     try {
       const response = await api.delete(`user/users/${id}`, {
         headers: {
@@ -57,7 +73,10 @@ class UsersService {
       })
       return response.data
     } catch (error) {
-      console.error(error)
+      if (error.response.status === 403) {
+        authStore.logout()
+      }
+      return error
     }
   }
 }

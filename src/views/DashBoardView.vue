@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useUsersStore } from '@/stores';
+import { useTagsStore } from '@/stores';
+import { toast } from 'vue3-toastify';
 import HeaderComp from '@/components/global/Header/HeaderComp.vue';
 import CardsComp from '@/components/DashBoard/CardsComp.vue';
 import LogsComp from '@/components/DashBoard/LogsComp.vue';
@@ -10,10 +12,9 @@ import UsersComp from '@/components/DashBoard/UsersComp.vue';
 
 const usersStore = useUsersStore();
 
-
+toast.info('Bem vindo ao Dashboard!');
 onMounted(async () => {
     await usersStore.getUsers();
-    console.log(usersStore.state.users);
 });
 </script>
 

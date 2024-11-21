@@ -1,4 +1,4 @@
-import { reactive, computed } from 'vue'
+import { reactive, computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { UsersService } from '@/services'
 import { useAuthStore } from './auth'

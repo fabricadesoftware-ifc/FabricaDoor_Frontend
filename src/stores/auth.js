@@ -48,7 +48,6 @@ export const useAuthStore = defineStore('auth', () => {
       console.error(error)
     } finally {
       isLoading.value = false
-      console.log(authUser.value)
     }
   }
 
@@ -67,9 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
       router.push('/login')
     } catch (error) {
       console.error(error)
-    } finally {
-      console.log(authUser.value)
-    }
+    } 
   }
 
   return {
