@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useUsersStore } from '@/stores';
-import { useTagsStore } from '@/stores';
 import { toast } from 'vue3-toastify';
 import HeaderComp from '@/components/global/Header/HeaderComp.vue';
 import CardsComp from '@/components/DashBoard/CardsComp.vue';

@@ -6,7 +6,6 @@ import { useAuthStore } from './auth'
 
 export const useDoorStore = defineStore('door', () => {
   const state = reactive({
-    open: false,
     loading: false,
     error: null
   })
@@ -17,7 +16,7 @@ export const useDoorStore = defineStore('door', () => {
     state.loading = true
     try {
       const response = await DoorService.openDoor(token)
-      state.open = response.data
+      return response.data
     } catch (error) {
       state.error = error
     } finally {

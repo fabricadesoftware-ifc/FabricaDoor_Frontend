@@ -1,22 +1,17 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ModalLogsComp } from '..';
 import { ArrowExpand } from '@/components/icons';
+import { useLogsStore } from '@/stores';
 
+const logsStore = useLogsStore();
 const showModalLogs = ref(false);
 
-const tags = ref([
-    { hora: 1, user: 'user1', },
-    { hora: 2, user: 'user2', },
-    { hora: 3, user: 'user3', },
-    { hora: 4, user: 'user4', },
-    { hora: 5, user: 'user5', },
-    { hora: 6, user: 'user6', },
-    { hora: 7, user: 'user7', },
-    { hora: 8, user: 'user8', },
-    { hora: 9, user: 'user9', },
-    { hora: 10, user: 'user10', },
-]);
+const logs = ref([])
+onMounted(async () => {
+    await logsStore.getLogs();
+    logs.value = logsStore.state.logs;
+});
 
 </script>
 
@@ -30,19 +25,14 @@ const tags = ref([
 
         <div class="list">
             <div class="headerList">
-                <p>Hora:</p>
-                <p>Usuario:</p>
+                <p>Data:</p>
+                <p>Menssagem:</p>
             </div>
-            <div v-for="(item, index) in tags" :key="index" class="ItemTags">
-                <p>{{ item.hora }}</p>
-                <p>{{ item.user }}</p>
-                <span style="display: flex; gap: .5rem;">
-                    <p>{{ item.status }}</p>
-                </span>
+            <div v-for="(log, index) in logs" :key="index" class="ItemTags">
+                <p>{{ log.date }}</p>
+                <p>{{ log.message }}</p>
             </div>
         </div>
-
-
     </article>
 </template>
 
