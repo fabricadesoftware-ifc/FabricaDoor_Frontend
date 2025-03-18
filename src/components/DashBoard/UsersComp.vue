@@ -11,6 +11,7 @@ const showModalUser = ref(false);
 const showModalAddUser = ref(false);
 const selected = ref({});
 const searchTerm = ref('');
+const screenWidth = ref(window.innerWidth);
 
 function openModalUser(data) {
     showModalUser.value = true;
@@ -28,13 +29,18 @@ const handleEscapeKey = (event) => {
     }
 };
 
+const updateScreenWidth = () => {
+    screenWidth.value = window.innerWidth;
+};
 
 onMounted(() => {
     window.addEventListener('keydown', handleEscapeKey);
+    window.addEventListener('resize', updateScreenWidth);
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('keydown', handleEscapeKey);
+    window.removeEventListener('resize', updateScreenWidth);
 });
 
 const filteredUsers = computed(() => {
@@ -43,6 +49,8 @@ const filteredUsers = computed(() => {
         user.name.toLowerCase().includes(searchTerm.value.toLowerCase())
     ) || [];
 });
+
+const isMobile = computed(() => screenWidth.value < 768);
 </script>
 
 <template>
@@ -59,37 +67,63 @@ const filteredUsers = computed(() => {
                 </div>
             </h2>
             <span>
-                <HoverButton text="Add" :color="'black'" :hover-text-color="'white'" @click="showModalAddUser = !showModalAddUser" />
+                <HoverButton text="Add" :color="'black'" :hover-text-color="'white'"
+                    @click="showModalAddUser = !showModalAddUser" />
             </span>
         </div>
 
         <div class="user-list">
-            <div class="headerList">
-                <p>ID</p>
-                <p>Nome</p>
-                <p>Email</p>
-                <p>Super Usuário</p>
-                <p>Verificado</p>
-                <p>Ações</p>
-            </div>
+            <template v-if="!isMobile">
+                <div class="headerList">
+                    <p>ID</p>
+                    <p>Nome</p>
+                    <p>Email</p>
+                    <p>Super Usuário</p>
+                    <p>Verificado</p>
+                    <p>Ações</p>
+                </div>
 
-            <div v-for="user in filteredUsers" :key="user.id" class="user-item">
-                <p>{{ user.id }}</p>
-                <p>{{ user.name }}</p>
-                <p>{{ user.email }}</p>
-                <p style="display: flex; align-items: center; gap: 0.5rem;">
-                    <component :is="iconComponents[user.isSuper ? 'CheckCircle' : 'Cancel']" width="20" height="20" />
-                    {{ user.isSuper ? 'Sim' : 'Não' }}
-                </p>
-                <p style="display: flex; align-items: center; gap: 0.5rem;">
-                    <component :is="iconComponents[user.isVerified ? 'CheckCircle' : 'Cancel']" width="20"
-                        height="20" />
-                    {{ user.isVerified ? 'Sim' : 'Não' }}
-                </p>
-                <p class="buttons">
-                    <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'" @click="openModalUser(user)" />
-                </p>
-            </div>
+                <div v-for="user in filteredUsers" :key="user.id" class="user-item">
+                    <p>{{ user.id }}</p>
+                    <p>{{ user.name }}</p>
+                    <p>{{ user.email }}</p>
+                    <p style="display: flex; align-items: center; gap: 0.5rem;">
+                        <component :is="iconComponents[user.isSuper ? 'CheckCircle' : 'Cancel']" width="20"
+                            height="20" />
+                        {{ user.isSuper ? 'Sim' : 'Não' }}
+                    </p>
+                    <p style="display: flex; align-items: center; gap: 0.5rem;">
+                        <component :is="iconComponents[user.isVerified ? 'CheckCircle' : 'Cancel']" width="20"
+                            height="20" />
+                        {{ user.isVerified ? 'Sim' : 'Não' }}
+                    </p>
+                    <p class="buttons">
+                        <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'"
+                            @click="openModalUser(user)" />
+                    </p>
+                </div>
+            </template>
+
+            <template v-else>
+                <div v-for="user in filteredUsers" :key="user.id" class="user-card">
+                    <p><strong>Nome:</strong> {{ user.name }}</p>
+                    <p style="display: flex; gap: .5rem;"><strong>Email:</strong> {{ user.email }}</p>
+                    <p style="display: flex; gap: .5rem;"><strong>Super Usuário:</strong>
+                        <component :is="iconComponents[user.isSuper ? 'CheckCircle' : 'Cancel']" width="20"
+                            height="20" />
+                        {{ user.isSuper ? ' Sim' : ' Não' }}
+                    </p>
+                    <p style="display: flex; gap: .5rem;"><strong>Verificado:</strong>
+                        <component :is="iconComponents[user.isVerified ? 'CheckCircle' : 'Cancel']" width="20"
+                            height="20" />
+                        {{ user.isVerified ? ' Sim' : ' Não' }}
+                    </p>
+                    <div class="buttons">
+                        <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'"
+                            @click="openModalUser(user)" />
+                    </div>
+                </div>
+            </template>
         </div>
     </section>
 </template>
@@ -145,6 +179,15 @@ h2 {
     border-bottom: 1px solid #ccc;
 }
 
+.user-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
 .buttons {
     display: flex;
     gap: 0.5rem;
@@ -162,31 +205,24 @@ span {
     border-radius: 15px;
 }
 
-.search>span {
-    z-index: 10;
-    border-radius: 15px 0px 0px 15px;
-    border-top: 2px solid #ccc;
-    border-left: 2px solid #ccc;
-    border-right: none;
-    border-bottom: 2px solid #ccc;
-    padding-left: .5rem;
-}
-
 .search>input {
-    border-top: 2px solid #ccc;
-    border-left: none;
-    border-right: 2px solid #ccc;
-    border-bottom: 2px solid #ccc;
+    border: 2px solid #ccc;
     padding: .5rem;
-    border-radius: 0px 15px 15px 0px;
+    border-radius: 15px;
 }
 
 .search>input:focus {
     outline: none;
 }
 
-button.add{
-    border-radius: 20%;
-    width: 2.5rem;
+@media (max-width: 768px) {
+    section {
+        width: 90%;
+    }
+
+    .user-list {
+        display: flex;
+        flex-direction: column;
+    }
 }
 </style>

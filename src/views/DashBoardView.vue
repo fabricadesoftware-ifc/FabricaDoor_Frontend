@@ -39,6 +39,7 @@ section.two {
 @media screen and (max-width: 1024px) {
     section.two {
         flex-direction: column;
+        width: 90%;
     }
 }
 </style>

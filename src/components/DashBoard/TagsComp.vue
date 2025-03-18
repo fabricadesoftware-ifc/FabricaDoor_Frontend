@@ -13,6 +13,11 @@ const orderedTags = computed(() => {
     });
 });
 
+// Função para truncar RFID maior que 6 caracteres
+const truncateRFID = (rfid) => {
+    return rfid.length > 8 ? rfid.substring(0, 8) + '...' : rfid;
+};
+
 const showModal = ref(false);
 const showModalTags = ref(false);
 const selected = ref({});
@@ -41,7 +46,7 @@ onMounted(async () => {
 
             <div v-for="(item) in orderedTags" :key="item.id" class="ItemTags">
                 <p>{{ item.id }}</p>
-                <p>{{ item.rfid }}</p>
+                <p>{{ truncateRFID(item.rfid) }}</p>
 
                 <span style="display: flex; gap: .5rem; align-items: center">
                     <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
@@ -121,5 +126,24 @@ span {
     display: flex;
     align-items: center;
     cursor: pointer;
+}
+
+@media screen and (max-width: 1024px) {
+    article {
+        padding: 1rem;
+        width: 100%;
+    }	
+
+    .ItemTags{
+        grid-template-columns: 1fr 1.5fr 1fr;
+    }
+
+    .headerList {
+        grid-template-columns: 1fr 1.5fr 1fr;
+        position: sticky;
+        top: 0;
+        width: 100%;
+        padding: 0;
+    }
 }
 </style>
