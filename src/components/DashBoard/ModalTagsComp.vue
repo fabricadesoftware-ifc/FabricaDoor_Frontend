@@ -4,7 +4,6 @@ import { ModalComp, HoverButton, AssignUserTagComp } from '..';
 import { Magnify, TagMultipleOutline } from '../icons';
 import { useTagsStore } from '@/stores';
 
-
 const tagsStore = useTagsStore();
 
 const tags = computed(() => tagsStore.state.tags);
@@ -68,7 +67,7 @@ function openModalTag(item) {
     <main v-if="isOpen" @click="closeOnBackdrop">
         <section>
             <div class="title">
-                <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="header">
                     <TagMultipleOutline :size="70" />
                     <h2>Gerenciar Tags</h2>
                 </div>
@@ -97,9 +96,7 @@ function openModalTag(item) {
                             <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
                             <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
                             <HoverButton v-if="!item.valid && item.user?.name" text="Ativar" color="black" hoverTextColor="white" @click="openModalValid(item)" />
-
                             <HoverButton v-if="item.valid && item.user?.name" text="Desativar" color="black" hoverTextColor="white" @click="openModalValid(item)" />
-
                             <HoverButton v-if="!item.valid && !item.user?.name" text="Desatribuir" color="black"
                                 hoverTextColor="white" @click="openModalTag(item)" />
                         </span>
@@ -223,5 +220,58 @@ span {
 
 .search>input:focus {
     outline: none;
+}
+
+@media screen and (max-width: 1024px) {
+    section {
+        width: 90%;
+    }
+
+    .headerList {
+        display: none;
+    }
+
+    .ItemTags {
+        grid-template-columns: 1fr;
+        height: 150px;
+        padding: .5rem;
+    }
+
+    .title {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .search>input {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .ItemTags {
+        height: auto;
+        padding: 1rem;
+    }
+
+    .search {
+        padding: 1rem;
+    }
+
+    .search>input {
+        font-size: 14px;
+    }
+
+    .title {
+        font-size: 16px;
+    }
+
+    .close {
+        font-size: 1.5rem;
+    }
 }
 </style>

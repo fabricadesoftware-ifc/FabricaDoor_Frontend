@@ -203,4 +203,12 @@ p>span {
     display: flex;
     justify-content: start;
 }
+
+@media screen and (max-width: 1024px) {
+    section {
+        width: 80%;
+        height: 55%;
+    }
+    
+}
 </style>

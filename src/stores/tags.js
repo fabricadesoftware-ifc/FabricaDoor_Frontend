@@ -104,6 +104,7 @@ export const useTagsStore = defineStore('tags', () => {
     state.loading = true
     try {
       const response = await TagsService.verifyTag(token, tagId)
+      router.go(0)
       return response.data
     } catch (error) {
       state.error = error

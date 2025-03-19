@@ -56,18 +56,23 @@ const isMobile = computed(() => screenWidth.value < 768);
 <template>
     <ModalUserComp v-model:isOpen="showModalUser" :object-selected="selected" />
     <ModalAddUser v-model:isOpen="showModalAddUser" />
-
+    
+    <template v-if="isMobile">
+        <div class="showUsersTitle">
+            <h1>Usuários</h1>
+        </div>
+    </template>
     <section>
         <div class="title">
             <h2>Usuários:
                 <Account />
                 <div class="search">
-                    <Magnify />
+                    <Magnify v-if="!isMobile" />
                     <input type="text" placeholder="Buscar..." v-model="searchTerm" />
                 </div>
             </h2>
             <span>
-                <HoverButton text="Add" :color="'black'" :hover-text-color="'white'"
+                <HoverButton text="Adicionar" :color="'black'" :hover-text-color="'white'"
                     @click="showModalAddUser = !showModalAddUser" />
             </span>
         </div>
@@ -148,6 +153,18 @@ section {
     align-items: center;
 }
 
+.showUsersTitle{
+    width: 90%;
+    margin: 20px auto;
+}
+
+.showUsersTitle h1{
+    font-size: 1.5rem;
+    font-weight: 600;
+    /* color: #6d6d6d; */
+    display: flex;
+}
+
 h2 {
     display: flex;
     align-items: center;
@@ -218,11 +235,46 @@ span {
 @media (max-width: 768px) {
     section {
         width: 90%;
+        margin-top: 5px;
     }
 
     .user-list {
         display: flex;
         flex-direction: column;
     }
+
+    .title {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .title>span:nth-child(2) {
+        width: 100%;
+        display: flex;
+        justify-content: start;
+    }
+
+    .title>h2 {
+        gap: 1rem;
+    }
+
+    .search>input {
+        width: 100%;
+    }
+
+    .user-card p {
+        display: flex;
+        gap: .5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .user-card p strong {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
 }
 </style>

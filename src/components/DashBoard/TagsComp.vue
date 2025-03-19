@@ -52,13 +52,13 @@ onMounted(async () => {
                     <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
                     <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
                     <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
-
-               
                 </span>
             </div>
         </div>
     </article>
 </template>
+
+
 
 <style scoped>
 article {
@@ -130,7 +130,7 @@ span {
 
 @media screen and (max-width: 1024px) {
     article {
-        padding: 1rem;
+        padding: .5rem;
         width: 100%;
     }	
 

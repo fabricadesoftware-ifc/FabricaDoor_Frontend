@@ -186,4 +186,11 @@ span {
 p>span {
   font-weight: 400;
 }
+
+@media screen and (max-width: 1024px) {
+  section {
+    width: 70%;
+  }
+  
+}
 </style>

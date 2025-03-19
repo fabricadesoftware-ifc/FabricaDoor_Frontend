@@ -127,7 +127,7 @@ button:hover {
     }
     
     article{
-        padding: 1rem;
+        padding: .5rem;
         width: 100%;
     }
 

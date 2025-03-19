@@ -85,8 +85,9 @@ main {
 }
 
 section {
-    width: 30%;
-    height: 50%;
+    width: 90%;
+    max-width: 500px;
+    height: auto;
     background-color: white;
     border-radius: 15px;
     padding: 2rem;
@@ -96,9 +97,7 @@ section {
     justify-content: space-between;
     box-shadow: 0 0 10px 0 #00000083;
     z-index: 300;
-
 }
-
 
 button.close {
     width: 10%;
@@ -139,8 +138,9 @@ span {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: space-between;
     gap: 1rem;
+    margin-top: 1rem;
 }
 
 .info {
@@ -149,14 +149,48 @@ span {
     gap: .5rem;
 }
 
-.info>p {
+.info > p {
     display: flex;
     gap: 1rem;
     align-items: center;
     font-weight: 500;
 }
 
-p>span {
+p > span {
     font-weight: 400;
 }
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+    section {
+        width: 90%;
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+
+    .buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    button.close {
+        font-size: 1.2rem;
+    }
+
+    .title h2 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .text h2 {
+        font-size: 1rem;
+    }
+
+    .subtitle {
+        font-size: 0.875rem;
+    }
+}
+
+
 </style>
