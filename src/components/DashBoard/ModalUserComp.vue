@@ -209,6 +209,21 @@ p>span {
         width: 80%;
         height: 55%;
     }
+
+    .showData {
+        width: 100%;
+    }
+
+    .showData p {
+        width: 100%;
+    }
+
+    .showData> p > span {
+        width: 100%;
+    }
+    input.showData {
+        width: 100%;
+    }
     
 }
 </style>

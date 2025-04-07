@@ -9,9 +9,15 @@ const tagsStore = useTagsStore();
 const tags = computed(() => tagsStore.state.tags);
 const searchTerm = ref("");
 
+// Agora filtra por RFID ou nome do usuário
 const filteredTags = computed(() => {
     return [...tags.value]
-        .filter(tag => tag.rfid.toLowerCase().includes(searchTerm.value.toLowerCase()))
+        .filter(tag => {
+            const term = searchTerm.value.toLowerCase();
+            const rfidMatch = tag.rfid?.toLowerCase().includes(term);
+            const userNameMatch = tag.user?.name?.toLowerCase().includes(term);
+            return rfidMatch || userNameMatch;
+        })
         .sort((a, b) => b.valid - a.valid);
 });
 
@@ -75,7 +81,7 @@ function openModalTag(item) {
                 <span>
                     <div class="search">
                         <Magnify />
-                        <input type="text" v-model="searchTerm" placeholder="Pesquisar Tag" />
+                        <input type="text" v-model="searchTerm" placeholder="Pesquisar por RFID ou nome do usuário" />
                     </div>
                     <button class="close" @click="closeModal">X</button>
                 </span>
@@ -98,17 +104,17 @@ function openModalTag(item) {
                             v-if="!item.valid && !item.user"
                             text="Atribuir" color="black" hoverTextColor="white"
                             @click="openModalTag(item)" />
-                        
+
                         <HoverButton
                             v-else-if="item.valid && !item.user"
                             text="Atribuir" color="black" hoverTextColor="white"
                             @click="openModalTag(item)" />
-                        
+
                         <HoverButton
                             v-else-if="item.valid && item.user"
                             text="Desativar" color="black" hoverTextColor="white"
                             @click="openModalValid(item)" />
-                        
+
                         <HoverButton
                             v-else-if="!item.valid && item.user"
                             text="Ativar" color="black" hoverTextColor="white"
@@ -135,7 +141,7 @@ main {
     backdrop-filter: blur(5px);
 }
 
-.header{
+.header {
     display: flex;
     gap: 1rem;
     align-items: center;
@@ -198,7 +204,6 @@ span {
 }
 
 .tag-card {
-    /* background-color: #f9f9f9; */
     border: 1px solid #ccc;
     border-radius: 12px;
     padding: 1.5rem;

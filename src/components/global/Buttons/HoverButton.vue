@@ -1,4 +1,9 @@
 <script setup>
+import { useStyleStore } from "@/stores";
+
+const store = useStyleStore();
+
+defineEmits(['click']);
 defineProps({
     text: String,
     color: String,
@@ -7,61 +12,60 @@ defineProps({
 </script>
 
 <template>
-    <button :style="{ borderColor: color }">
-        {{ text }}
-    </button>
+  <button
+    v-if="store.localUser.textColor === '#131316'"
+    @click="$emit('click')"
+    :style="{ borderColor: '#131316' }"
+    class="modo-claro"
+  >
+    {{ text }}
+  </button>
+
+  <button
+    v-else
+    @click="$emit('click')"
+    :style="{ borderColor: 'white' }"
+    class="modo-escuro"
+  >
+    {{ text }}
+  </button>
 </template>
 
 <style scoped>
-:host {
-    --button-color: green;
-    --button-background-color: green;
-    --button-border-color: green;
-    --button-hover-text-color: white;
-}
-
 button {
-    padding: 0.4em 1.2em;
-    position: relative;
-    overflow: hidden;
-    background-color: transparent;
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 16px;
-    transition: color 0.3s ease, background-color 0.3s ease;
-    font-family: inherit;
-    color: var(--button-color) !important;
-    border: 2px solid var(--button-border-color) !important;
-    border-radius: 15px;
+  padding: 0.4em 1.2em;
+  position: relative;
+  overflow: hidden;
+  background-color: transparent;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 16px;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  font-family: inherit;
+  border: 2px solid;
+  border-radius: 15px;
+  cursor: pointer;
 }
 
-button::before {
-    content: '';
-    width: 100%;
-    height: 0;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: var(--button-background-color) !important;
-    transition: height 0.3s ease;
-    z-index: -1;
+/* Estilo do botão no modo escuro */
+.modo-claro {
+  color: #131316;
+  background-color: white;
 }
 
-button:hover::before {
-    height: 100%;
-    top: 0;
+.modo-claro:hover {
+  background-color: #131316;
+  color: white;
 }
 
-button:hover {
-    color: var(--button-hover-text-color) !important;
-    background-color: var(--button-color) !important;
+/* Estilo do botão no modo claro */
+.modo-escuro {
+  color: white;
+  background-color: #131316;
 }
 
-button {
-    --button-color: v-bind(color) !important;
-    --button-background-color: v-bind(color) !important;
-    --button-border-color: v-bind(color) !important;
-    --button-hover-text-color: v-bind(hoverTextColor) !important;
-    cursor: pointer;
+.modo-escuro:hover {
+  background-color: white;
+  color: #131316;
 }
 </style>

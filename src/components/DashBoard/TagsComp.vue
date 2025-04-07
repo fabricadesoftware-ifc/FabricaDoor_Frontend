@@ -130,11 +130,11 @@ span {
 
 @media screen and (max-width: 1024px) {
     article {
-        padding: .5rem;
+        padding: 1rem;
         width: 100%;
-    }	
+    }
 
-    .ItemTags{
+    .ItemTags {
         grid-template-columns: 1fr 1.5fr 1fr;
     }
 
@@ -144,6 +144,15 @@ span {
         top: 0;
         width: 100%;
         padding: 0;
+    }
+
+    .list {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .list::-webkit-scrollbar {
+        display: none;
     }
 }
 </style>

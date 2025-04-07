@@ -127,8 +127,17 @@ button:hover {
     }
     
     article{
-        padding: .5rem;
+        padding: 1rem;
         width: 100%;
+    }
+
+    .list {
+        scrollbar-width: none; 
+        -ms-overflow-style: none; 
+    }
+
+    .list::-webkit-scrollbar {
+        display: none; 
     }
 
 

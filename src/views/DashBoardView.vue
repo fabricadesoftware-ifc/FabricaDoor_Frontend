@@ -7,8 +7,6 @@ import LogsComp from '@/components/DashBoard/LogsComp.vue';
 import TagsComp from '@/components/DashBoard/TagsComp.vue';
 import FooterComp from '@/components/global/Footer/FooterComp.vue';
 import UsersComp from '@/components/DashBoard/UsersComp.vue';
-import ToggleModeComp from '@/components/DashBoard/ToggleModeComp.vue';
-
 const usersStore = useUsersStore();
 
 onMounted(async () => {
@@ -18,7 +16,6 @@ onMounted(async () => {
 
 <template>
     <HeaderComp />
-    <!-- <ToggleModeComp /> -->
     <CardsComp />
     <section class="two">
         <TagsComp />

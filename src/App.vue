@@ -1,12 +1,10 @@
 <script setup>
 import { watch, onMounted } from 'vue';
-import { useStyleStore, useAuthStore } from './stores';
+import { useStyleStore } from './stores';
 import DarkLight from './components/global/Buttons/DarkLight.vue';
 import LoadingComp from './components/global/Cards/LoadingComp.vue';
 
 const store = useStyleStore();
-// const tagsStore = useTagsStore();
-const authStore = useAuthStore();
 
 function updateGlobalStyles() {
   if (store.localUser) {
@@ -32,22 +30,16 @@ function changeColor() {
 }
 
 onMounted(async () => {
-  
-
   updateGlobalStyles();
-  // await tagsStore.getTags();
-
 });
 
 
 </script>
 
 <template>
-  <DarkLight @click="changeColor" />
-  <LoadingComp v-if="authStore.isLoading" :img="store.localUser.image" :bgcolor="store.localUser.backgroundColor" />
-  <div v-else>
-    <RouterView />
-  </div>
+  <!-- <DarkLight @click="changeColor" /> -->
+  <LoadingComp :img="store.localUser.image" :bgcolor="store.localUser.backgroundColor" />
+  <RouterView />
 </template>
 
 <style>
