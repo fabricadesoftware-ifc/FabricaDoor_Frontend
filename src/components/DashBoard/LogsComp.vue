@@ -39,7 +39,7 @@ onMounted(async () => {
             </div>
             <div v-for="(log, index) in logs" :key="index" class="ItemTags">
                 <p>{{ log.formattedDate }}</p>
-                <p>{{ log.message }}</p>
+                <p>{{ 'MENSAGEM DE LOG' }}</p>
             </div>
         </div>
     </article>
@@ -92,7 +92,7 @@ span {
     display: grid;
     grid-template-columns: 1fr 1fr;
     border-bottom: 1px solid #ccc;
-    height: 50px;
+    height: 1000px;
     margin: 10px auto;
     flex-direction: column;
     color: black;

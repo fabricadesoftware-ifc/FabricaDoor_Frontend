@@ -23,6 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       const response = await AuthService.login(data)
+      console.log(response)
       if (response.data.isVerified == false) {
         logout()
       } else {

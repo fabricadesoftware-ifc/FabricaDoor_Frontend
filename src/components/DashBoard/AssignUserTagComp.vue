@@ -73,7 +73,7 @@ watch(
           <p>RFID: <span>{{ objectSelected.rfid }}</span></p>
           <p>Status:
             <span>
-              <input type="checkbox" /> Ativo
+              <input type="checkbox" :checked="objectSelected.valid" /> Ativo
             </span>
           </p>
           <p>

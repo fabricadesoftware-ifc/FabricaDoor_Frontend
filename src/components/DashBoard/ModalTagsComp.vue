@@ -7,11 +7,12 @@ import { useTagsStore } from '@/stores';
 const tagsStore = useTagsStore();
 
 const tags = computed(() => tagsStore.state.tags);
-const searchTerm = ref(""); 
+const searchTerm = ref("");
 
 const filteredTags = computed(() => {
     return [...tags.value]
-        .filter(tag => tag.rfid.toLowerCase().includes(searchTerm.value.toLowerCase())).sort((a, b) => b.valid - a.valid); 
+        .filter(tag => tag.rfid.toLowerCase().includes(searchTerm.value.toLowerCase()))
+        .sort((a, b) => b.valid - a.valid);
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -79,27 +80,39 @@ function openModalTag(item) {
                     <button class="close" @click="closeModal">X</button>
                 </span>
             </div>
-            <div class="list-container">
-                <div class="headerList">
-                    <p>Id da Tag</p>
-                    <p>Usuario</p>
-                    <p>RFID</p>
-                    <p>Status</p>
-                </div>
-                <div class="list">
-                    <div v-for="(item, index) in filteredTags" :key="index" class="ItemTags">
-                        <p>{{ item.id }}</p>
-                        <p>{{ item.user?.name ? item.user?.name : "Não Atribuido" }}</p>
-                        <p>{{ item.rfid }}</p>
-                        <span>
-                            <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
-                            <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
-                            <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
-                            <HoverButton v-if="!item.valid && item.user?.name" text="Ativar" color="black" hoverTextColor="white" @click="openModalValid(item)" />
-                            <HoverButton v-if="item.valid && item.user?.name" text="Desativar" color="black" hoverTextColor="white" @click="openModalValid(item)" />
-                            <HoverButton v-if="!item.valid && !item.user?.name" text="Desatribuir" color="black"
-                                hoverTextColor="white" @click="openModalTag(item)" />
-                        </span>
+
+            <div class="card-grid">
+                <div v-for="(item, index) in filteredTags" :key="index" class="tag-card">
+                    <div class="card-content">
+                        <p><strong>ID:</strong> {{ item.id }}</p>
+                        <p><strong>Usuário:</strong> {{ item.user?.name || "Não Atribuido" }}</p>
+                        <p><strong>RFID:</strong> {{ item.rfid }}</p>
+                        <div class="status">
+                            <img v-if="item.valid" src="/public/approved.svg" width="20" alt="Aprovado">
+                            <img v-else src="/public/denied.svg" width="20" alt="Desativado">
+                            <span>{{ item.valid ? 'Ativo' : 'Desativado' }}</span>
+                        </div>
+                    </div>
+                    <div class="card-buttons">
+                        <HoverButton
+                            v-if="!item.valid && !item.user"
+                            text="Atribuir" color="black" hoverTextColor="white"
+                            @click="openModalTag(item)" />
+                        
+                        <HoverButton
+                            v-else-if="item.valid && !item.user"
+                            text="Atribuir" color="black" hoverTextColor="white"
+                            @click="openModalTag(item)" />
+                        
+                        <HoverButton
+                            v-else-if="item.valid && item.user"
+                            text="Desativar" color="black" hoverTextColor="white"
+                            @click="openModalValid(item)" />
+                        
+                        <HoverButton
+                            v-else-if="!item.valid && item.user"
+                            text="Ativar" color="black" hoverTextColor="white"
+                            @click="openModalValid(item)" />
                     </div>
                 </div>
             </div>
@@ -122,6 +135,12 @@ main {
     backdrop-filter: blur(5px);
 }
 
+.header{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
 section {
     width: 80%;
     height: 80%;
@@ -132,12 +151,16 @@ section {
     flex-direction: column;
     box-shadow: 0 0 10px 0 #00000083;
     z-index: 1;
+    overflow-y: auto;
 }
 
 .title {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 span {
@@ -154,120 +177,75 @@ span {
     cursor: pointer;
 }
 
-.list-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-y: auto;
-}
-
-.headerList {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    width: 100%;
-    color: #6d6d6d;
-    padding: 0 1rem;
-    border-bottom: 1px solid #ccc;
-    background-color: white;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-height: 100%;
-    overflow-y: auto;
-    width: 100%;
-}
-
-.ItemTags {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    border-bottom: 1px solid #ccc;
-    height: 100px;
-    padding: .5rem 1rem;
-    align-items: center;
-    color: black;
-}
-
 .search {
     display: flex;
     padding: .5rem 0;
     border-radius: 15px;
 }
 
-.search>span {
-    z-index: 10;
-    border-radius: 15px 0px 0px 15px;
-    border-top: 2px solid #ccc;
-    border-left: 2px solid #ccc;
-    border-right: none;
-    border-bottom: 2px solid #ccc;
-    padding-left: .5rem;
-}
-
-.search>input {
-    border-top: 2px solid #ccc;
-    border-left: none;
-    border-right: 2px solid #ccc;
-    border-bottom: 2px solid #ccc;
+.search input {
+    border: 2px solid #ccc;
     padding: .5rem;
-    border-radius: 0px 15px 15px 0px;
-}
-
-.search>input:focus {
+    border-radius: 15px;
     outline: none;
 }
 
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    overflow-y: auto;
+}
+
+.tag-card {
+    /* background-color: #f9f9f9; */
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.card-content {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
 @media screen and (max-width: 1024px) {
-    section {
-        width: 90%;
-    }
-
-    .headerList {
-        display: none;
-    }
-
-    .ItemTags {
-        grid-template-columns: 1fr;
-        height: 150px;
-        padding: .5rem;
-    }
-
-    .title {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .search {
-        width: 100%;
-        padding: 1rem;
-    }
-
-    .search>input {
-        width: 100%;
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media screen and (max-width: 600px) {
-    .ItemTags {
-        height: auto;
-        padding: 1rem;
+    .card-grid {
+        grid-template-columns: 1fr;
     }
 
-    .search {
-        padding: 1rem;
+    section {
+        width: 90%;
+        padding: 2rem 1rem;
     }
 
-    .search>input {
-        font-size: 14px;
-    }
-
-    .title {
-        font-size: 16px;
+    .search input {
+        width: 100%;
     }
 
     .close {

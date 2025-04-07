@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { SideBar } from '@/components';
 import { LockOpenOutline, LockOutline,  Menu } from '@/components/icons';
+import ToggleModeComp from '@/components/DashBoard/ToggleModeComp.vue';
 import { useAuthStore } from '@/stores';
 
 const authStore = useAuthStore();
@@ -30,6 +31,9 @@ const handleMouseLeave = () => {
             <nav>
                 <ul>
                     <li>
+                        <ToggleModeComp />
+                    </li>
+                    <li>
                         <router-link to="/dashboard" v-if="authStore.authUser.isLogged">Dashboard</router-link>
                     </li>
                     <li>
@@ -44,6 +48,7 @@ const handleMouseLeave = () => {
                             Logout
                         </span>
                     </li>
+                    
                 </ul>
             </nav>
             <div class="secondNav">

@@ -34,6 +34,7 @@ const authStore = useAuthStore();
                 </span>
             </li>
         </ul>
+        <!-- <ToggleMode /> -->
     </aside>
 </template>
 

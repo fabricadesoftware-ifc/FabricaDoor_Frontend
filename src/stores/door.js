@@ -24,8 +24,22 @@ export const useDoorStore = defineStore('door', () => {
     }
   }
 
+  const toggleMode = async () => {
+
+    try{
+      const response = await DoorService.toggleMode(token)
+      return response.data
+    }catch (error) {
+      state.error = error
+    }
+    finally {
+      state.loading = false
+    }
+  }
+
   return {
     state,
-    openDoor
+    openDoor,
+    toggleMode
   }
 })
