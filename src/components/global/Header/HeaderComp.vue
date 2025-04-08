@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { SideBar } from '@/components';
 import { LockOpenOutline, LockOutline } from '@/components/icons';
 import ToggleModeComp from '@/components/DashBoard/ToggleModeComp.vue';
@@ -44,9 +44,6 @@ onMounted(() => {
                     </li>
                     <li>
                         <router-link to="/dashboard" v-if="authStore.authUser.isLogged">Dashboard</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/">Configurações</router-link>
                     </li>
                     <li>
                         <router-link to="/profile" v-if="authStore.authUser.isLogged">Perfil</router-link>

@@ -1,5 +1,5 @@
 <script setup>
-import { ViewDashboard, Cog, Account } from '@/components/icons';
+import { ViewDashboard, Account } from '@/components/icons';
 import { useAuthStore } from '@/stores';
 
 const authStore = useAuthStore();
