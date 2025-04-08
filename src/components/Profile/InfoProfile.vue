@@ -146,5 +146,11 @@ article {
         justify-content: center;
     }
 
+    .align {
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
 }
 </style>
