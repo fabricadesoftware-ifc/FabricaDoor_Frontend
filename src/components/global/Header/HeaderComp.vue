@@ -1,13 +1,13 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { SideBar } from '@/components';
-import { LockOpenOutline, LockOutline,  Menu } from '@/components/icons';
+import { LockOpenOutline, LockOutline } from '@/components/icons';
+import ToggleModeComp from '@/components/DashBoard/ToggleModeComp.vue';
 import { useAuthStore } from '@/stores';
 
 const authStore = useAuthStore();
 
-const isOpen = ref(false);
-
+const isMobile = ref(false);
 const isHovered = ref(false);
 
 const handleMouseEnter = () => {
@@ -17,23 +17,33 @@ const handleMouseEnter = () => {
 const handleMouseLeave = () => {
     isHovered.value = false;
 };
+
+const updateIsMobile = () => {
+    isMobile.value = window.innerWidth <= 1024;
+};
+
+onMounted(() => {
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+});
+
 </script>
 
 <template>
-    <SideBar v-if="isOpen" />
+    <SideBar v-if="isMobile" />
     <header>
         <div class="container">
             <div class="logo" @mouseover="handleMouseEnter" @mouseleave="handleMouseLeave">
                 <component :is="isHovered ? LockOpenOutline : LockOutline" :size="60" />
                 <router-link to="/" class="title">FabricaDoor</router-link>
             </div>
-            <nav>
+            <nav v-if="!isMobile">
                 <ul>
                     <li>
-                        <router-link to="/dashboard" v-if="authStore.authUser.isLogged">Dashboard</router-link>
+                        <ToggleModeComp />
                     </li>
                     <li>
-                        <router-link to="/">Configurações</router-link>
+                        <router-link to="/dashboard" v-if="authStore.authUser.user.isSuper">Dashboard</router-link>
                     </li>
                     <li>
                         <router-link to="/profile" v-if="authStore.authUser.isLogged">Perfil</router-link>
@@ -46,9 +56,6 @@ const handleMouseLeave = () => {
                     </li>
                 </ul>
             </nav>
-            <div class="secondNav">
-                <Menu :size="40" @click="isOpen = !isOpen" />
-            </div>
         </div>
     </header>
 </template>
@@ -136,35 +143,15 @@ li {
     height: 20px;
 }
 
-.secondNav {
-    display: none;
-}
-
 @media screen and (max-width: 1024px) {
     .container {
         width: 90%;
-        justify-content: space-between;
+        justify-content: center;
+        
     }
 
-    a.title{
+    a.title {
         font-size: 1.5rem;
-    }
-
-    nav {
-        display: none;
-    }
-
-    .secondNav {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    span {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 }
 </style>

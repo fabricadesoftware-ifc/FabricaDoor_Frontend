@@ -2,6 +2,7 @@
 import { useAuthStore, useDoorStore } from '@/stores';
 import { OpenDoor } from '..';
 import { debounce } from 'lodash';
+import { ref } from 'vue';
 const authStore = useAuthStore();
 const doorStore = useDoorStore();
 
@@ -22,8 +23,6 @@ const ShowDataUsedTimes = (data) => {
     } else if (data >= 500) {
         return 'já mora aqui';
     }
-
-
 }
 
 const handleOpenDoor = debounce(() => {
@@ -35,8 +34,8 @@ const handleOpenDoor = debounce(() => {
 <template>
     <article>
         <div class="photo">
-            <img src="https://www.portaldoholanda.com.br/sites/default/files/imagecache/portal2014_fotonoticiagrande/portaldoholanda-626973-imagem-foto-amazonas.jpg"
-                alt="">
+            <img src="https://door-api.fexcompany.me/avatar/mcquen.jpg"
+                alt="User Picture">
         </div>
         <div class="info">
             <div class="align">
@@ -144,6 +143,12 @@ article {
 
     .tags {
         justify-content: center;
+    }
+
+    .align {
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
     }
 
 }

@@ -11,6 +11,7 @@ const showModalUser = ref(false);
 const showModalAddUser = ref(false);
 const selected = ref({});
 const searchTerm = ref('');
+const screenWidth = ref(window.innerWidth);
 
 function openModalUser(data) {
     showModalUser.value = true;
@@ -28,13 +29,18 @@ const handleEscapeKey = (event) => {
     }
 };
 
+const updateScreenWidth = () => {
+    screenWidth.value = window.innerWidth;
+};
 
 onMounted(() => {
     window.addEventListener('keydown', handleEscapeKey);
+    window.addEventListener('resize', updateScreenWidth);
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('keydown', handleEscapeKey);
+    window.removeEventListener('resize', updateScreenWidth);
 });
 
 const filteredUsers = computed(() => {
@@ -53,42 +59,40 @@ const filteredUsers = computed(() => {
         <div class="title">
             <h2>Usuários:
                 <Account />
-                <div class="search">
-                    <Magnify />
-                    <input type="text" placeholder="Buscar..." v-model="searchTerm" />
-                </div>
             </h2>
+            <div class="search">
+                <input type="text" placeholder="Buscar..." v-model="searchTerm" />
+            </div>
             <span>
-                <HoverButton text="Add" :color="'black'" :hover-text-color="'white'" @click="showModalAddUser = !showModalAddUser" />
+                <HoverButton text="Adicionar +" :color="'black'" :hover-text-color="'white'"
+                    @click="showModalAddUser = !showModalAddUser" />
             </span>
         </div>
 
-        <div class="user-list">
-            <div class="headerList">
-                <p>ID</p>
-                <p>Nome</p>
-                <p>Email</p>
-                <p>Super Usuário</p>
-                <p>Verificado</p>
-                <p>Ações</p>
-            </div>
+        <div class="card-grid">
+            <div v-for="user in filteredUsers" :key="user.id" class="user-card">
+                <div class="card-content">
+                    <p><strong>ID:</strong> {{ user.id }}</p>
+                    <p><strong>Nome:</strong> {{ user.name }}</p>
+                    <div class="user-status">
+                        <p><strong>Super Usuário:
 
-            <div v-for="user in filteredUsers" :key="user.id" class="user-item">
-                <p>{{ user.id }}</p>
-                <p>{{ user.name }}</p>
-                <p>{{ user.email }}</p>
-                <p style="display: flex; align-items: center; gap: 0.5rem;">
-                    <component :is="iconComponents[user.isSuper ? 'CheckCircle' : 'Cancel']" width="20" height="20" />
-                    {{ user.isSuper ? 'Sim' : 'Não' }}
-                </p>
-                <p style="display: flex; align-items: center; gap: 0.5rem;">
-                    <component :is="iconComponents[user.isVerified ? 'CheckCircle' : 'Cancel']" width="20"
-                        height="20" />
-                    {{ user.isVerified ? 'Sim' : 'Não' }}
-                </p>
-                <p class="buttons">
-                    <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'" @click="openModalUser(user)" />
-                </p>
+                            </strong>
+                            <component :is="iconComponents[user.isSuper ? 'CheckCircle' : 'Cancel']" width="20"
+                                height="20" />
+                            {{ user.isSuper ? 'Sim' : 'Não' }}
+                        </p>
+                        <p><strong>Verificado:</strong>
+                            <component :is="iconComponents[user.isVerified ? 'CheckCircle' : 'Cancel']" width="20"
+                                height="20" />
+                            {{ user.isVerified ? 'Sim' : 'Não' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="card-buttons">
+                    <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'"
+                        @click="openModalUser(user)" />
+                </div>
             </div>
         </div>
     </section>
@@ -101,59 +105,63 @@ section {
     gap: 1rem;
     width: 80%;
     margin: 2rem auto;
-    border: 1px solid #ccc;
     padding: 1rem;
     border-radius: 10px;
-    max-height: 500px;
-    overflow-y: auto;
+    border: 1px solid #ccc;
 }
 
 .title {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-h2 {
-    display: flex;
-    align-items: center;
     gap: 1rem;
+    align-items: center;
 }
 
-.user-list {
-    width: 100%;
-}
-
-.headerList {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr 2fr 1fr 1fr 1fr;
-    font-weight: bold;
-    color: #6d6d6d;
-    border-bottom: 1px solid #ccc;
-    padding: 0.5rem 0;
-    position: sticky;
-    top: -17px;
-    left: 0;
-    z-index: 1;
-    width: 100%;
-}
-
-.user-item {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr 2fr 1fr 1fr 1fr;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #ccc;
-}
-
-.buttons {
+.title h2 {
     display: flex;
+    align-items: center;
     gap: 0.5rem;
 }
 
-span {
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.user-card {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.card-content {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-status {
     display: flex;
     gap: 1rem;
+}
+
+.user-status p {
+    display: flex;
     align-items: center;
+    gap: 0.5rem;
+}
+
+.card-buttons {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .search {
@@ -162,31 +170,47 @@ span {
     border-radius: 15px;
 }
 
-.search>span {
-    z-index: 10;
-    border-radius: 15px 0px 0px 15px;
-    border-top: 2px solid #ccc;
-    border-left: 2px solid #ccc;
-    border-right: none;
-    border-bottom: 2px solid #ccc;
-    padding-left: .5rem;
-}
-
-.search>input {
-    border-top: 2px solid #ccc;
-    border-left: none;
-    border-right: 2px solid #ccc;
-    border-bottom: 2px solid #ccc;
+.search input {
+    border: 2px solid #ccc;
     padding: .5rem;
-    border-radius: 0px 15px 15px 0px;
-}
-
-.search>input:focus {
+    border-radius: 15px;
     outline: none;
 }
 
-button.add{
-    border-radius: 20%;
-    width: 2.5rem;
+@media screen and (max-width: 1024px) {
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-height: 400px;
+        overflow-y: auto;
+        scrollbar-width: none;
+    }
+
+    .card-grid::-webkit-scrollbar {
+        display: none; 
+    }
+
+    .title {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-status {
+        flex-direction: column;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    section {
+        width: 90%;
+        padding: 2rem 1rem;
+    }
+
+    .search input {
+        width: 100%;
+    }
 }
 </style>

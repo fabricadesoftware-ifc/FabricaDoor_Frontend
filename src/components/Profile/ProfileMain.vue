@@ -1,12 +1,15 @@
 <script setup>
-import { InfoProfile, MyLogs, MyTags } from '..';
+import { InfoProfile, MyTags } from '..';
+import { useTagsStore } from '@/stores';
+
+const tagsStore = useTagsStore();
 </script>
 
 <template>
     <main>
         <InfoProfile />
         <MyTags />
-        <MyLogs />
+        <!-- <MyLogs /> -->
     </main>
 </template>
 
@@ -15,7 +18,7 @@ main {
     width: 50%;
     margin: 30px auto;
     border: 1px solid #ccc;
-    height: 80vh;
+    height: 40vh;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
@@ -25,7 +28,7 @@ main {
 @media screen and (max-width: 1024px) {
     main {
         width: 90%;
-        height: 160vh;
+        height: 90vh;
     }
 }
 </style>

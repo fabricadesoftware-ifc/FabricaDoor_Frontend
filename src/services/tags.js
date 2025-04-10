@@ -15,6 +15,7 @@ class TagsService {
       if (error.response.status === 403) {
         authStore.logout()
       }
+      console.error(error)
       return error
     }
   }

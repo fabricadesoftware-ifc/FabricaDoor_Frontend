@@ -13,7 +13,8 @@ export const useAuthStore = defineStore('auth', () => {
       id: '',
       name: '',
       isSuper: false,
-      isVerified: false
+      isVerified: false,
+      picture: ''
     }
   })
 
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       const response = await AuthService.login(data)
+      console.log(response)
       if (response.data.isVerified == false) {
         logout()
       } else {
@@ -34,9 +36,12 @@ export const useAuthStore = defineStore('auth', () => {
             id: response.data.id,
             name: response.data.name,
             isSuper: response.data.isSuper,
-            isValid: response.data.isVerified
+            isValid: response.data.isVerified,
+            picture: response.data.picture
           }
         }
+
+        
 
         if (response.data.isSuper) {
           router.push('/dashboard')
@@ -66,7 +71,7 @@ export const useAuthStore = defineStore('auth', () => {
       router.push('/login')
     } catch (error) {
       console.error(error)
-    } 
+    }
   }
 
   return {

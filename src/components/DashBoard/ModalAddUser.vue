@@ -189,4 +189,18 @@ span {
 p>span {
     font-weight: 400;
 }
+
+@media screen and (max-width: 1024px) {
+    section {
+        width: 90%;
+        height: 65%;
+    }
+
+    .info>p {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+}
 </style>

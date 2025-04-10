@@ -7,12 +7,21 @@ import { useLogsStore } from '@/stores';
 const logsStore = useLogsStore();
 const showModalLogs = ref(false);
 
-const logs = ref([])
+const logs = ref([]);
+
+const formatDateTime = (dateTimeString) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const date = new Date(dateTimeString);
+    return date.toLocaleDateString('pt-BR', options);
+};
+
 onMounted(async () => {
     await logsStore.getLogs();
-    logs.value = logsStore.state.logs;
+    logs.value = logsStore.state.logs.map(log => ({
+        ...log,
+        formattedDate: formatDateTime(log.date)
+    }));
 });
-
 </script>
 
 <template>
@@ -29,7 +38,7 @@ onMounted(async () => {
                 <p>Menssagem:</p>
             </div>
             <div v-for="(log, index) in logs" :key="index" class="ItemTags">
-                <p>{{ log.date }}</p>
+                <p>{{ log.formattedDate }}</p>
                 <p>{{ log.message }}</p>
             </div>
         </div>
@@ -55,7 +64,7 @@ article {
     justify-content: space-between;
 }
 
-span{
+span {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -83,7 +92,7 @@ span{
     display: grid;
     grid-template-columns: 1fr 1fr;
     border-bottom: 1px solid #ccc;
-    height: 50px;
+    height: 1000px;
     margin: 10px auto;
     flex-direction: column;
     color: black;
@@ -104,5 +113,33 @@ button {
 button:hover {
     background-color: #000000dc;
     color: #fff;
+}
+
+@media screen and (max-width: 1024px) {
+    .headerList {
+        display: none;
+    }
+
+    .ItemTags {
+        grid-template-columns: 1fr;
+        height: 100px;
+        padding: 0;
+    }
+    
+    article{
+        padding: 1rem;
+        width: 100%;
+    }
+
+    .list {
+        scrollbar-width: none; 
+        -ms-overflow-style: none; 
+    }
+
+    .list::-webkit-scrollbar {
+        display: none; 
+    }
+
+
 }
 </style>

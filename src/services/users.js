@@ -1,7 +1,6 @@
 import api from '@/plugin/axios'
 import { useAuthStore } from '@/stores'
 
-
 class UsersService {
   
   async getUsers(token) {
@@ -76,6 +75,7 @@ class UsersService {
       if (error.response.status === 403) {
         authStore.logout()
       }
+      console.error(error)
       return error
     }
   }

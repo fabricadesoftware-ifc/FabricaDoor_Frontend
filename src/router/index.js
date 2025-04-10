@@ -45,26 +45,36 @@ router.beforeEach(async (to, from, next) => {
   const store = useAuthStore()
 
   if (to.meta.requiresAuth && !store.authUser.isLogged) {
-    next('/login')
-  } else if (to.meta.requiresAdmin) {
-
-    const response = await api.get('auth/verify', {
-      headers: {
-        Authorization: `Bearer ${store.authUser.token}`
-      }
-    })
-
-    if (response.data.data) {
-      next()
-    } else {
-      store.logout()
-      next('/login')
-    }
-  } else if (to.matched.length === 0) {
-    next('/login')
-  } else {
-    next()
+    return next('/login')
   }
+
+  if (to.meta.requiresAdmin) {
+    try {
+      const response = await api.get('auth/verify', {
+        headers: {
+          Authorization: `Bearer ${store.authUser.token}`
+        }
+      })
+
+      const isAdmin = response.data.data?.isSuper
+
+      if (isAdmin) {
+        return next()
+      } else {
+        return next('/profile')
+      }
+    } catch (error) {
+      console.error(error)
+      store.logout()
+      return next('/login')
+    }
+  }
+
+  if (to.matched.length === 0) {
+    return next('/login')
+  }
+
+  return next()
 })
 
 export default router
