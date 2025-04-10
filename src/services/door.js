@@ -12,9 +12,11 @@ class DoorService {
       })
       return response.data
     } catch (error) {
+      console.error(error)
       if (error.response.status === 403) {
         authStore.logout()
       }
+
       return error
     }
   }
