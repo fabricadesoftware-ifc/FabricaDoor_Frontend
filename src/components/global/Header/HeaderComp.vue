@@ -43,7 +43,7 @@ onMounted(() => {
                         <ToggleModeComp />
                     </li>
                     <li>
-                        <router-link to="/dashboard" v-if="authStore.authUser.isLogged">Dashboard</router-link>
+                        <router-link to="/dashboard" v-if="authStore.authUser.user.isSuper">Dashboard</router-link>
                     </li>
                     <li>
                         <router-link to="/profile" v-if="authStore.authUser.isLogged">Perfil</router-link>

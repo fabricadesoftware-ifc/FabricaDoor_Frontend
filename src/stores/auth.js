@@ -13,7 +13,8 @@ export const useAuthStore = defineStore('auth', () => {
       id: '',
       name: '',
       isSuper: false,
-      isVerified: false
+      isVerified: false,
+      picture: ''
     }
   })
 
@@ -35,9 +36,12 @@ export const useAuthStore = defineStore('auth', () => {
             id: response.data.id,
             name: response.data.name,
             isSuper: response.data.isSuper,
-            isValid: response.data.isVerified
+            isValid: response.data.isVerified,
+            picture: response.data.picture
           }
         }
+
+        
 
         if (response.data.isSuper) {
           router.push('/dashboard')

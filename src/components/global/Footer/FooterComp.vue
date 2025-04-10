@@ -1,5 +1,6 @@
 <script setup>
-    import  { Help } from '@/components/icons';
+import { Help } from '@/components/icons';
+
 </script>
 
 <template>
@@ -23,7 +24,6 @@ footer {
     width: 100%;
     padding: 1rem;
     text-align: center;
-    /* border-top: 1px solid #ccc; */
     margin-top: 5rem;
     font-weight: 250;
     color: #6d6d6d;
@@ -71,11 +71,11 @@ span {
 @media (max-width: 1024px) {
     .container {
         width: 95%;
-        
+
     }
 
-    .logo{
-        flex-direction: column;
+    .logo {
+        /* flex-direction: column; */
         align-items: start;
     }
 }

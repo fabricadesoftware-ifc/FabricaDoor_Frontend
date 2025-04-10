@@ -23,7 +23,8 @@ function formatTime(dateString) {
 }
 
 onMounted(async () => {
-    await tagsStore.getMyTags(authStore.authUser.user.id);
+   const a = await tagsStore.getMyTags(authStore.authUser.user.id);
+   console.log(a)
 });
 </script>
 
@@ -68,10 +69,9 @@ onMounted(async () => {
 .myTags {
     width: 90%;
     margin: 0 auto;
-    height: 3vh;
     display: flex;
     flex-direction: column;
-    height: 30vh;
+    height: 100%;
 }
 
 h2 {

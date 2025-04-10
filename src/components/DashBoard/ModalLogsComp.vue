@@ -1,31 +1,20 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import {  onMounted, onUnmounted } from 'vue';
 import { Magnify, NoteTextOutline } from '../icons';
+import { useLogsStore } from '@/stores';
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
   isOpen: Boolean,
 });
 
+const logsStore = useLogsStore();
+
 const emit = defineEmits(["update:isOpen"]);
 
 const closeModal = () => {
   emit("update:isOpen", false);
 };
-
-const logs = ref([
-  { id: 1, user: 'user1', hora: '08:30', dia: '07', ano: '2025' },
-  { id: 2, user: 'user2', hora: '09:15', dia: '07', ano: '2025' },
-  { id: 3, user: 'user3', hora: '10:45', dia: '06', ano: '2025' },
-  { id: 4, user: 'user4', hora: '11:20', dia: '06', ano: '2025' },
-  { id: 5, user: 'user5', hora: '14:10', dia: '05', ano: '2025' },
-  { id: 5, user: 'user5', hora: '14:10', dia: '05', ano: '2025' },
-  { id: 5, user: 'user5', hora: '14:10', dia: '05', ano: '2025' },
-  { id: 5, user: 'user5', hora: '14:10', dia: '05', ano: '2025' },
-  { id: 5, user: 'user5', hora: '14:10', dia: '05', ano: '2025' },
-  { id: 5, user: 'user5', hora: '14:10', dia: '05', ano: '2025' },
-  { id: 5, user: 'user5', hora: '14:10', dia: '05', ano: '2025' },
-]);
 
 const handleClickOutside = (event) => {
   if (event.target.closest('section') === null) {
@@ -39,9 +28,11 @@ const handleEscKey = (event) => {
   }
 };
 
-onMounted(() => {
+onMounted(async() => {
   window.addEventListener('click', handleClickOutside);
   window.addEventListener('keydown', handleEscKey);
+
+  await logsStore.getLogs();
 });
 
 onUnmounted(() => {
@@ -68,13 +59,12 @@ onUnmounted(() => {
       </div>
 
       <div class="card-grid">
-        <div v-for="(log, index) in logs" :key="index" class="log-card">
+        <div v-for="(log, index) in logsStore.state.logs" :key="index" class="log-card">
           <div class="card-content">
             <p><strong>ID da Tag:</strong> {{ log.id }}</p>
-            <p><strong>Usuário:</strong> {{ log.user }}</p>
-            <p><strong>Hora:</strong> {{ log.hora }}</p>
-            <p><strong>Dia:</strong> {{ log.dia }}</p>
-            <p><strong>Ano:</strong> {{ log.ano }}</p>
+            <p><strong>ID da Tag:</strong> {{ log.type }}</p>
+            <p><strong>ID da Tag:</strong> {{ log.message }}</p>
+            <p><strong>ID da Tag:</strong> {{ log.date }}</p>
           </div>
         </div>
       </div>

@@ -39,7 +39,7 @@ onMounted(async () => {
             </div>
             <div v-for="(log, index) in logs" :key="index" class="ItemTags">
                 <p>{{ log.formattedDate }}</p>
-                <p>{{ 'MENSAGEM DE LOG' }}</p>
+                <p>{{ log.message }}</p>
             </div>
         </div>
     </article>

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { ModalComp, HoverButton, AssignUserTagComp } from '..';
-import { Magnify, TagMultipleOutline } from '../icons';
+import { TagMultipleOutline } from '../icons';
 import { useTagsStore } from '@/stores';
 
 const tagsStore = useTagsStore();
@@ -9,7 +9,6 @@ const tagsStore = useTagsStore();
 const tags = computed(() => tagsStore.state.tags);
 const searchTerm = ref("");
 
-// Agora filtra por RFID ou nome do usuário
 const filteredTags = computed(() => {
     return [...tags.value]
         .filter(tag => {
@@ -80,7 +79,6 @@ function openModalTag(item) {
                 </div>
                 <span>
                     <div class="search">
-                        <Magnify />
                         <input type="text" v-model="searchTerm" placeholder="Pesquisar por RFID ou nome do usuário" />
                     </div>
                     <button class="close" @click="closeModal">X</button>
@@ -93,6 +91,7 @@ function openModalTag(item) {
                         <p><strong>ID:</strong> {{ item.id }}</p>
                         <p><strong>Usuário:</strong> {{ item.user?.name || "Não Atribuido" }}</p>
                         <p><strong>RFID:</strong> {{ item.rfid }}</p>
+
                         <div class="status">
                             <img v-if="item.valid" src="/public/approved.svg" width="20" alt="Aprovado">
                             <img v-else src="/public/denied.svg" width="20" alt="Desativado">
@@ -100,25 +99,17 @@ function openModalTag(item) {
                         </div>
                     </div>
                     <div class="card-buttons">
-                        <HoverButton
-                            v-if="!item.valid && !item.user"
-                            text="Atribuir" color="black" hoverTextColor="white"
-                            @click="openModalTag(item)" />
+                        <HoverButton v-if="!item.valid && !item.user" text="Atribuir" color="black"
+                            hoverTextColor="white" @click="openModalTag(item)" />
 
-                        <HoverButton
-                            v-else-if="item.valid && !item.user"
-                            text="Atribuir" color="black" hoverTextColor="white"
-                            @click="openModalTag(item)" />
+                        <HoverButton v-else-if="item.valid && !item.user" text="Atribuir" color="black"
+                            hoverTextColor="white" @click="openModalTag(item)" />
 
-                        <HoverButton
-                            v-else-if="item.valid && item.user"
-                            text="Desativar" color="black" hoverTextColor="white"
-                            @click="openModalValid(item)" />
+                        <HoverButton v-else-if="item.valid && item.user" text="Desativar" color="black"
+                            hoverTextColor="white" @click="openModalValid(item)" />
 
-                        <HoverButton
-                            v-else-if="!item.valid && item.user"
-                            text="Ativar" color="black" hoverTextColor="white"
-                            @click="openModalValid(item)" />
+                        <HoverButton v-else-if="!item.valid && item.user" text="Ativar" color="black"
+                            hoverTextColor="white" @click="openModalValid(item)" />
                     </div>
                 </div>
             </div>
@@ -242,6 +233,17 @@ span {
 @media screen and (max-width: 600px) {
     .card-grid {
         grid-template-columns: 1fr;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .card-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .title {
+        align-items: center;
+        justify-content: center;
     }
 
     section {
