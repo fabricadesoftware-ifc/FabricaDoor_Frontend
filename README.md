@@ -121,7 +121,22 @@ Sinta-se à vontade para contribuir com o projeto!
 
 ## 👨‍🏫 Equipe / Agradecimentos
 
-Projeto desenvolvido no âmbito da disciplina de Fábrica de Software do Instituto Federal Catarinense (IFC) por discentes do curso de Sistemas de Informação.
+<div>
+<table>
+<tr>
+<td align="center">
+   <b>Anthony Loche Dos Reis</b> <br>
+   <a href="https://github.com/AnthonyLoche"><img src="https://avatars.githubusercontent.com/u/126203565?v=4" width="80px;" alt="Anthony"/></a>
+   <br>
+</td>
+<td align="center">
+   <b>Jonatas Silva Peraza</b> <br>
+   <a href="https://github.com/jonatasperaza"><img src="https://avatars.githubusercontent.com/u/73970519?v=4" width="80px;" alt="Jonatas"/></a>
+   <br>
+</td>
+</tr>
+</table>
+</div>
 
 ---
 
