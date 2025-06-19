@@ -7,7 +7,7 @@ import { Help } from '@/components/icons';
         <v-container>
             <v-row align="center" justify="space-between" class="py-2">
                 <v-col cols="12" sm="6" class="d-flex align-center justify-center justify-sm-start">
-                    <v-img src="/public/ifcLogoGreen.png" max-width="120" alt="IFC Logo" class="logo-hover" />
+                    <v-img src="/ifcLogoGreen.png" max-width="120" alt="IFC Logo" class="logo-hover" />
                 </v-col>
 
                 <v-col cols="12" sm="6" class="d-flex align-center justify-center justify-sm-end">

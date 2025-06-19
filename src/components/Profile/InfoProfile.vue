@@ -50,10 +50,6 @@ const handleOpenDoor = debounce(() => {
                 </div>
             </div>
         </div>
-
-        <div class="d-flex align-center">
-            <OpenDoor @click="handleOpenDoor" />
-        </div>
     </div>
 </template>
 

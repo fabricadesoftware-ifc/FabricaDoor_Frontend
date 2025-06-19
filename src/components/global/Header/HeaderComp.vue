@@ -35,7 +35,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <v-app-bar class="px-4" color="surface-dark">
+        <v-app-bar class="px-10 py-2" color="surface-dark">
             <v-app-bar-nav-icon v-if="isMobile" @click="drawer = !drawer"></v-app-bar-nav-icon>
 
             <div class="d-flex align-center" @mouseover="handleMouseEnter" @mouseleave="handleMouseLeave">

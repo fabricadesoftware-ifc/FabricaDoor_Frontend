@@ -5,14 +5,14 @@ export const useStyleStore = defineStore('style', () => {
   const localUser = useStorage('localUser', {
     textColor: 'black',
     backgroundColor: 'white',
-    image: '/public/loadingLight.gif'
+    image: '/loadingLight.gif'
   })
 
   const darkMode = () => {
     try {
       localUser.value.textColor = 'white'
       localUser.value.backgroundColor = '#131316'
-      localUser.value.image = '/public/loadingDark.gif'
+      localUser.value.image = '/loadingDark.gif'
     } catch (error) {
       console.error(error)
     }
@@ -22,7 +22,7 @@ export const useStyleStore = defineStore('style', () => {
     try {
       localUser.value.textColor = '#131316'
       localUser.value.backgroundColor = 'white'
-      localUser.value.image = '/public/loadingLight.gif'
+      localUser.value.image = '/loadingLight.gif'
     } catch (error) {
       console.error(error)
     }

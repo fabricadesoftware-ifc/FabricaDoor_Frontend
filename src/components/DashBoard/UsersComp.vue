@@ -43,7 +43,7 @@ const filteredUsers = computed(() => {
                 </v-btn>
             </div>
 
-            <v-row>
+            <v-row class="p-5 h-[400px] overflow-scroll">
                 <v-col v-for="user in filteredUsers" :key="user.id" cols="12" sm="6" md="4" class="pa-2">
                     <v-card>
                         <v-card-text>

@@ -20,18 +20,6 @@ const authStore = useAuthStore();
                     <span>Perfil</span>
                 </router-link>
             </li>
-            <!-- <li>
-                <router-link to="/config">
-                    <component :is="Cog" :size="30" />
-                    <span>Configurações</span>
-                </router-link>
-            </li> -->
-            <!-- <li v-if="authStore.authUser.isLogged">
-                <span @click="authStore.logout" class="logout">
-                    <img src="/public/logout.svg" alt="Logout" />
-                    <span>Logout</span>
-                </span>
-            </li> -->
         </ul>
     </nav>
 </template>

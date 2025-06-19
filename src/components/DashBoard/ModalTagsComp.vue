@@ -57,10 +57,10 @@ const handleKeydown = (e) => {
     <AssignUserTagComp v-model:isOpen="showModalTags" :object-selected="selected" />
 
     <v-dialog :model-value="isOpen" @update:model-value="emit('update:isOpen', $event)" max-width="1200"
-        max-height="800" transition="dialog-bottom-transition" persistent @keydown="handleKeydown">
+        max-height="600" transition="dialog-bottom-transition" persistent @keydown="handleKeydown">
         <v-card>
-            <v-toolbar color="primary" class="pr-3">
-                <v-avatar color="surface" class="mr-4">
+            <v-toolbar color="primary" class="px-5">
+                <v-avatar color="surface" class="mr-2">
                     <TagMultipleOutline :size="24" />
                 </v-avatar>
                 <v-toolbar-title>Gerenciar Tags</v-toolbar-title>

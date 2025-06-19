@@ -37,9 +37,9 @@ onMounted(async () => {
                         Logs de Acesso Recentes
                     </v-card-title>
                 </div>
-                <v-btn icon variant="text" @click="showModalLogs = true">
+                <!-- <v-btn icon variant="text" @click="showModalLogs = true">
                     <ArrowExpand :size="30" />
-                </v-btn>
+                </v-btn> -->
             </div>
 
             <v-table fixed-header height="400px">
