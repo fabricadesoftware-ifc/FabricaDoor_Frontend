@@ -1,47 +1,19 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
-import { ModalUserComp, HoverButton, ModalAddUser } from '..';
+import { ref, computed } from 'vue';
+import { ModalUserComp, ModalAddUser } from '..';
 import { useUsersStore } from '@/stores';
-import { Cancel, Magnify, Account, CheckCircle } from '../icons';
-
-const iconComponents = { CheckCircle, Cancel };
+import { Account } from '../icons';
 
 const usersStore = useUsersStore();
 const showModalUser = ref(false);
 const showModalAddUser = ref(false);
 const selected = ref({});
 const searchTerm = ref('');
-const screenWidth = ref(window.innerWidth);
 
 function openModalUser(data) {
     showModalUser.value = true;
     selected.value = data;
 }
-
-const closeModal = () => {
-    showModalUser.value = false;
-    showModalAddUser.value = false;
-};
-
-const handleEscapeKey = (event) => {
-    if (event.key === 'Escape') {
-        closeModal();
-    }
-};
-
-const updateScreenWidth = () => {
-    screenWidth.value = window.innerWidth;
-};
-
-onMounted(() => {
-    window.addEventListener('keydown', handleEscapeKey);
-    window.addEventListener('resize', updateScreenWidth);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('keydown', handleEscapeKey);
-    window.removeEventListener('resize', updateScreenWidth);
-});
 
 const filteredUsers = computed(() => {
     if (!searchTerm.value) return usersStore.state.users.data?.users || [];
@@ -55,47 +27,64 @@ const filteredUsers = computed(() => {
     <ModalUserComp v-model:isOpen="showModalUser" :object-selected="selected" />
     <ModalAddUser v-model:isOpen="showModalAddUser" />
 
-    <section>
-        <div class="title">
-            <h2>Usuários:
-                <Account />
-            </h2>
-            <div class="search">
-                <input type="text" placeholder="Buscar..." v-model="searchTerm" />
-            </div>
-            <span>
-                <HoverButton text="Adicionar +" :color="'black'" :hover-text-color="'white'"
-                    @click="showModalAddUser = !showModalAddUser" />
-            </span>
-        </div>
-
-        <div class="card-grid">
-            <div v-for="user in filteredUsers" :key="user.id" class="user-card">
-                <div class="card-content">
-                    <p><strong>ID:</strong> {{ user.id }}</p>
-                    <p><strong>Nome:</strong> {{ user.name }}</p>
-                    <div class="user-status">
-                        <p><strong>Super Usuário:
-
-                            </strong>
-                            <component :is="iconComponents[user.isSuper ? 'CheckCircle' : 'Cancel']" width="20"
-                                height="20" />
-                            {{ user.isSuper ? 'Sim' : 'Não' }}
-                        </p>
-                        <p><strong>Verificado:</strong>
-                            <component :is="iconComponents[user.isVerified ? 'CheckCircle' : 'Cancel']" width="20"
-                                height="20" />
-                            {{ user.isVerified ? 'Sim' : 'Não' }}
-                        </p>
-                    </div>
+    <v-container class="pa-4">
+        <v-card class="pa-4">
+            <div class="d-flex flex-wrap align-center gap-4 mb-4">
+                <div class="d-flex align-center">
+                    <h2 class="text-h5 mr-2">Usuários</h2>
+                    <Account />
                 </div>
-                <div class="card-buttons">
-                    <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'"
-                        @click="openModalUser(user)" />
-                </div>
+
+                <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" label="Buscar..." variant="outlined"
+                    density="compact" hide-details class="flex-grow-1" />
+
+                <v-btn color="primary" @click="showModalAddUser = !showModalAddUser" prepend-icon="mdi-plus">
+                    Adicionar
+                </v-btn>
             </div>
-        </div>
-    </section>
+
+            <v-row>
+                <v-col v-for="user in filteredUsers" :key="user.id" cols="12" sm="6" md="4" class="pa-2">
+                    <v-card>
+                        <v-card-text>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="d-flex align-center justify-space-between">
+                                    <span class="font-weight-medium">ID: {{ user.id }}</span>
+                                </div>
+
+                                <div class="d-flex align-center justify-space-between">
+                                    <span class="font-weight-medium">Nome: {{ user.name }}</span>
+                                </div>
+
+                                <v-divider class="my-2"></v-divider>
+
+                                <div class="d-flex align-center justify-space-between">
+                                    <span>Super Usuário:</span>
+                                    <v-chip :color="user.isSuper ? 'success' : 'error'" size="small" class="ml-2">
+                                        {{ user.isSuper ? 'Sim' : 'Não' }}
+                                    </v-chip>
+                                </div>
+
+                                <div class="d-flex align-center justify-space-between">
+                                    <span>Verificado:</span>
+                                    <v-chip :color="user.isVerified ? 'success' : 'error'" size="small" class="ml-2">
+                                        {{ user.isVerified ? 'Sim' : 'Não' }}
+                                    </v-chip>
+                                </div>
+                            </div>
+                        </v-card-text>
+
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="primary" variant="text" @click="openModalUser(user)">
+                                Editar
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-card>
+    </v-container>
 </template>
 
 <style scoped>
@@ -186,7 +175,7 @@ section {
     }
 
     .card-grid::-webkit-scrollbar {
-        display: none; 
+        display: none;
     }
 
     .title {

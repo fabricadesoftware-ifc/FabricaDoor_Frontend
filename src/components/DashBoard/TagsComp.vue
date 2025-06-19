@@ -31,34 +31,44 @@ onMounted(async () => {
     <ModalComp v-model:isOpen="showModal" :objectSelected="selected" />
     <ModalTagsComp v-model:isOpen="showModalTags" />
 
-    <article>
-        <div class="title">
-            Gerenciar Tags
-            <ArrowExpand :size="30" @click="showModalTags = true" />
-        </div>
-
-        <div class="list">
-            <div class="headerList">
-                <p>Id da Tag</p>
-                <p>RFID</p>
-                <p>Status</p>
+    <v-card height="100%" class="d-flex flex-column">
+        <v-card-item>
+            <div class="d-flex justify-space-between align-center mb-4">
+                <v-card-title class="text-h5">
+                    Gerenciar Tags
+                </v-card-title>
+                <v-btn icon @click="showModalTags = true">
+                    <ArrowExpand :size="30" />
+                </v-btn>
             </div>
 
-            <div v-for="(item) in orderedTags" :key="item.id" class="ItemTags">
-                <p>{{ item.id }}</p>
-                <p>{{ truncateRFID(item.rfid) }}</p>
-
-                <span style="display: flex; gap: .5rem; align-items: center">
-                    <img v-if="item.valid" src="/public/approved.svg" width="10%" alt="Aprovado">
-                    <img v-if="!item.valid" src="/public/denied.svg" width="10%" alt="Desativado">
-                    <p>{{ item.valid ? 'Ativo' : 'Desativado' }}</p>
-                </span>
-            </div>
-        </div>
-    </article>
+            <v-table fixed-header height="400px">
+                <thead>
+                    <tr>
+                        <th class="text-left text-on-surface">Id da Tag</th>
+                        <th class="text-left text-on-surface">RFID</th>
+                        <th class="text-left text-on-surface">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in orderedTags" :key="item.id" @click="showModal = true; selected = item"
+                        style="cursor: pointer">
+                        <td class="text-on-surface">{{ item.id }}</td>
+                        <td class="text-on-surface">{{ truncateRFID(item.rfid) }}</td>
+                        <td>
+                            <v-chip :color="item.valid ? 'success' : 'error'" size="small" class="text-on-surface">
+                                <template v-slot:prepend>
+                                    <v-icon :icon="item.valid ? 'mdi-check-circle' : 'mdi-close-circle'" size="small" />
+                                </template>
+                                {{ item.valid ? 'Ativo' : 'Desativado' }}
+                            </v-chip>
+                        </td>
+                    </tr>
+                </tbody>
+            </v-table>
+        </v-card-item>
+    </v-card>
 </template>
-
-
 
 <style scoped>
 article {

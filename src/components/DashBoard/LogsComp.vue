@@ -6,7 +6,6 @@ import { useLogsStore } from '@/stores';
 
 const logsStore = useLogsStore();
 const showModalLogs = ref(false);
-
 const logs = ref([]);
 
 const formatDateTime = (dateTimeString) => {
@@ -26,120 +25,68 @@ onMounted(async () => {
 
 <template>
     <ModalLogsComp v-model:isOpen="showModalLogs" />
-    <article>
-        <div class="title">
-            Logs de Acesso Recentes
-            <ArrowExpand :size="30" @click="showModalLogs = true" />
-        </div>
 
-        <div class="list">
-            <div class="headerList">
-                <p>Data:</p>
-                <p>Menssagem:</p>
+    <v-card height="100%" class="d-flex flex-column">
+        <v-card-item>
+            <div class="d-flex justify-space-between align-center mb-4">
+                <div class="d-flex align-center">
+                    <v-avatar color="primary" class="mr-4">
+                        <v-icon>mdi-history</v-icon>
+                    </v-avatar>
+                    <v-card-title class="text-h5">
+                        Logs de Acesso Recentes
+                    </v-card-title>
+                </div>
+                <v-btn icon variant="text" @click="showModalLogs = true">
+                    <ArrowExpand :size="30" />
+                </v-btn>
             </div>
-            <div v-for="(log, index) in logs" :key="index" class="ItemTags">
-                <p>{{ log.formattedDate }}</p>
-                <p>{{ log.message }}</p>
-            </div>
-        </div>
-    </article>
+
+            <v-table fixed-header height="400px">
+                <thead>
+                    <tr>
+                        <th class="text-left text-on-surface">
+                            Data
+                        </th>
+                        <th class="text-left text-on-surface">
+                            Mensagem
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(log, index) in logs" :key="index" class="log-row">
+                        <td class="text-on-surface">{{ log.formattedDate }}</td>
+                        <td class="text-on-surface">{{ log.message }}</td>
+                    </tr>
+                </tbody>
+            </v-table>
+        </v-card-item>
+    </v-card>
 </template>
 
 <style scoped>
-article {
-    width: 100%;
-    border-radius: 15px;
-    border: 1px solid #ccc;
-    display: flex;
-    padding: 3rem;
-    flex-direction: column;
-    gap: 3rem;
+.log-row {
+    transition: background-color 0.2s ease;
 }
 
-.title {
-    font-size: 2rem;
+.log-row:hover {
+    background-color: var(--v-hover-color);
+}
+
+.v-table {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+:deep(.v-table__wrapper) {
+    border-radius: 16px;
+}
+
+:deep(.v-table > .v-table__wrapper > table > thead > tr > th) {
     font-weight: 600;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-}
-
-span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.headerList {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    color: #6d6d6d;
-    padding: 0 1rem;
-}
-
-.list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.ItemTags {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border-bottom: 1px solid #ccc;
-    height: 1000px;
-    margin: 10px auto;
-    flex-direction: column;
-    color: black;
-    padding: .5rem 1rem;
-    align-items: center;
-}
-
-button {
-    border: 0;
-    padding: .5rem;
-    border-radius: 15px;
-    color: #fff;
-    background-color: black;
-    cursor: pointer;
-    transition: .3s ease-in-out;
-}
-
-button:hover {
-    background-color: #000000dc;
-    color: #fff;
-}
-
-@media screen and (max-width: 1024px) {
-    .headerList {
-        display: none;
-    }
-
-    .ItemTags {
-        grid-template-columns: 1fr;
-        height: 100px;
-        padding: 0;
-    }
-    
-    article{
-        padding: 1rem;
-        width: 100%;
-    }
-
-    .list {
-        scrollbar-width: none; 
-        -ms-overflow-style: none; 
-    }
-
-    .list::-webkit-scrollbar {
-        display: none; 
-    }
-
-
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.025em;
+    background-color: var(--v-surface-variant-color);
 }
 </style>

@@ -2,6 +2,7 @@
 import { onMounted } from 'vue';
 import { useTagsStore, useAuthStore } from '@/stores';
 import { TagMultipleOutline } from '../icons';
+
 const tagsStore = useTagsStore();
 const authStore = useAuthStore();
 
@@ -23,46 +24,62 @@ function formatTime(dateString) {
 }
 
 onMounted(async () => {
-   const a = await tagsStore.getMyTags(authStore.authUser.user.id);
-   console.log(a)
+    await tagsStore.getMyTags(authStore.authUser.user.id);
 });
 </script>
 
 <template>
-    <h2>Minhas Tags:
-        <component :is="TagMultipleOutline" :size="30" />
-    </h2>
-    <article class="myTags">
-        <div class="headerList">
-            <p>ID:</p>
-            <p>Tag:</p>
-            <p>Data de Registro:</p>
-            <p>Ultima Vez Usada:</p>
-            <p>Vezes Usadas:</p>
-            <p>Status:</p>
+    <div>
+        <div class="d-flex align-center mb-4">
+            <h2 class="text-h6">Minhas Tags</h2>
+            <TagMultipleOutline :size="24" class="ml-2" />
         </div>
-        <div class="list">
-            <div v-for="tag in tagsStore.state.myTags" :key="tag.id" class="itemList">
-                <p>{{ tag.id }}</p>
-                <p>{{ tag.rfid }}</p>
-                <p class="date">
-                    <span> {{ formatDate(tag.created_at) }}
-                    </span>
-                    <span> {{ formatTime(tag.created_at) }}
-                    </span>
-                </p>
-                <p class="date">
-                    <span> {{ formatDate(tag.last_time_used) }}
-                    </span>
-                    <span>
-                        {{ formatTime(tag.last_time_used) }}
-                    </span>
-                </p>
-                <p>{{ tag.used_times }}</p>
-                <p>{{ tag.valid }}</p>
-            </div>
+
+        <v-table fixed-header height="400px">
+            <thead>
+                <tr>
+                    <th class="text-left">ID</th>
+                    <th class="text-left">Tag</th>
+                    <th class="text-left">Data de Registro</th>
+                    <th class="text-left">Última Utilização</th>
+                    <th class="text-left">Utilizações</th>
+                    <th class="text-left">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="tag in tagsStore.state.myTags" :key="tag.id">
+                    <td>{{ tag.id }}</td>
+                    <td>{{ tag.rfid }}</td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span class="font-weight-medium">{{ formatDate(tag.created_at) }}</span>
+                            <span class="text-caption text-medium-emphasis">{{ formatTime(tag.created_at) }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span class="font-weight-medium">{{ formatDate(tag.last_time_used) }}</span>
+                            <span class="text-caption text-medium-emphasis">{{ formatTime(tag.last_time_used) }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <v-chip :color="tag.used_times > 100 ? 'success' : 'primary'" size="small" label>
+                            {{ tag.used_times }}
+                        </v-chip>
+                    </td>
+                    <td>
+                        <v-chip :color="tag.valid ? 'success' : 'error'" size="small" label>
+                            {{ tag.valid ? 'Ativo' : 'Inativo' }}
+                        </v-chip>
+                    </td>
+                </tr>
+            </tbody>
+        </v-table>
+
+        <div v-if="!tagsStore.state.myTags?.length" class="d-flex justify-center align-center pa-8">
+            <v-alert type="info" text="Você ainda não possui tags cadastradas." variant="tonal"></v-alert>
         </div>
-    </article>
+    </div>
 </template>
 
 <style scoped>
@@ -134,15 +151,15 @@ span {
         border: 0;
     }
 
-   
+
 
     .itemList {
-        
+
         grid-template-columns: 1fr;
         grid-template-rows: repeat(6, 1fr);
         border: 0;
     }
 
-   
+
 }
 </style>

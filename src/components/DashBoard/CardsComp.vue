@@ -1,9 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
-import { CardUtils } from '..';
 import { useUsersStore, useTagsStore } from '@/stores';
 import { TagMultipleOutline, Account, DoorOpen } from '../icons';
-import { ContentLoader } from 'vue-content-loader';
 
 const usersStore = useUsersStore();
 const tagsStore = useTagsStore();
@@ -15,28 +13,70 @@ onMounted(async () => {
 </script>
 
 <template>
-    <section>
-        <div class="title">
-            Dashboard
-        </div>
-        <div class="cards">
-                <ContentLoader v-if="tagsStore.isLoading" width="100%" height="120" :speed="2" :primaryColor="'#ecebeb'" :secondaryColor="'#c4c4c4'" style="border-radius: 17px;">
-                    <rect x="0" y="0" rx="3" ry="3" width="705" height="120" />
-                </ContentLoader>
-                <CardUtils v-else :icon="TagMultipleOutline" title="Tags" :number="tagsStore.countTags" />
+    <v-row>
+        <v-col cols="12" sm="4">
+            <v-card elevation="1" class="h-100 card-hover">
+                <v-card-item>
+                    <template v-if="tagsStore.isLoading">
+                        <v-skeleton-loader type="card" />
+                    </template>
+                    <template v-else>
+                        <div class="d-flex align-center mb-4">
+                            <v-avatar color="primary" class="mr-4">
+                                <TagMultipleOutline :size="24" color="white" />
+                            </v-avatar>
+                            <v-card-title class="text-h6 text-on-surface">Tags</v-card-title>
+                        </div>
+                        <v-card-text class="text-h4 text-on-surface pa-0">
+                            {{ tagsStore.countTags }}
+                        </v-card-text>
+                    </template>
+                </v-card-item>
+            </v-card>
+        </v-col>
 
-                <ContentLoader v-if="usersStore.isLoading" width="100%" height="120" :speed="2" :primaryColor="'#ecebeb'" :secondaryColor="'#c4c4c4'" style="border-radius: 17px;">
-                    <rect x="0" y="0" rx="3" ry="3" width="705" height="120" />
-                </ContentLoader>
-                <CardUtils v-else :icon="Account" title="Usuários Ativos" :number="usersStore.countUsers" />
+        <v-col cols="12" sm="4">
+            <v-card elevation="1" class="h-100 card-hover">
+                <v-card-item>
+                    <template v-if="usersStore.isLoading">
+                        <v-skeleton-loader type="card" />
+                    </template>
+                    <template v-else>
+                        <div class="d-flex align-center mb-4">
+                            <v-avatar color="success" class="mr-4">
+                                <Account :size="24" color="white" />
+                            </v-avatar>
+                            <v-card-title class="text-h6 text-on-surface">Usuários Ativos</v-card-title>
+                        </div>
+                        <v-card-text class="text-h4 text-on-surface pa-0">
+                            {{ usersStore.countUsers }}
+                        </v-card-text>
+                    </template>
+                </v-card-item>
+            </v-card>
+        </v-col>
 
-                <ContentLoader v-if="tagsStore.isLoading" width="100%" height="120" :speed="2" :primaryColor="'#ecebeb'" :secondaryColor="'#c4c4c4'" style="border-radius: 17px;">
-                    <rect x="0" y="0" rx="3" ry="3" width="705" height="120" />
-                </ContentLoader>
-                <CardUtils v-else :icon="DoorOpen" title="Acessos Hoje" :number="10" />
-
-        </div>
-    </section>
+        <v-col cols="12" sm="4">
+            <v-card elevation="1" class="h-100 card-hover">
+                <v-card-item>
+                    <template v-if="tagsStore.isLoading">
+                        <v-skeleton-loader type="card" />
+                    </template>
+                    <template v-else>
+                        <div class="d-flex align-center mb-4">
+                            <v-avatar color="info" class="mr-4">
+                                <DoorOpen :size="24" color="white" />
+                            </v-avatar>
+                            <v-card-title class="text-h6 text-on-surface">Acessos Hoje</v-card-title>
+                        </div>
+                        <v-card-text class="text-h4 text-on-surface pa-0">
+                            10
+                        </v-card-text>
+                    </template>
+                </v-card-item>
+            </v-card>
+        </v-col>
+    </v-row>
 </template>
 
 <style scoped>
@@ -68,5 +108,16 @@ section {
     .cards {
         flex-direction: column;
     }
+}
+
+.card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    border-color: var(--v-border-color);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.05), 0 10px 10px rgba(0, 0, 0, 0.02) !important;
 }
 </style>

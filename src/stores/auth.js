@@ -41,8 +41,6 @@ export const useAuthStore = defineStore('auth', () => {
           }
         }
 
-        
-
         if (response.data.isSuper) {
           router.push('/dashboard')
         } else {

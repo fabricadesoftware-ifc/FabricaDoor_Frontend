@@ -1,82 +1,57 @@
 <script setup>
 import { Help } from '@/components/icons';
-
 </script>
 
 <template>
-    <footer>
-        <div class="container">
-            <div class="logo">
-                <img src="/public/ifcLogoGreen.png" width="50%" alt="">
-                <img src="/public/logoFabrica.png" alt="">
-            </div>
-            <router-link to="/login" class="support">
-                <div class="icon">
-                    <Help />
-                </div>
-            </router-link>
-        </div>
-    </footer>
+    <v-footer class="bg-surface-variant">
+        <v-container>
+            <v-row align="center" justify="space-between" class="py-2">
+                <v-col cols="12" sm="6" class="d-flex align-center justify-center justify-sm-start">
+                    <v-img src="/public/ifcLogoGreen.png" max-width="120" alt="IFC Logo" class="logo-hover" />
+                </v-col>
+
+                <v-col cols="12" sm="6" class="d-flex align-center justify-center justify-sm-end">
+                    <v-tooltip text="Suporte" location="top">
+                        <template v-slot:activator="{ props }">
+                            <v-btn v-bind="props" href="https://fabricadesoftware.ifc.edu.br/" target="_blank" icon
+                                variant="outlined" color="primary" class="support-btn">
+                                <Help :size="24" />
+                            </v-btn>
+                        </template>
+                    </v-tooltip>
+                </v-col>
+            </v-row>
+
+            <v-row>
+                <v-col cols="12" class="text-center pt-0">
+                    <p class="text-medium-emphasis text-caption">
+                        © {{ new Date().getFullYear() }} FabricaDoor - Desenvolvido no IFC Campus Araquari
+                    </p>
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-footer>
 </template>
 
 <style scoped>
-footer {
-    width: 100%;
-    padding: 1rem;
-    text-align: center;
-    margin-top: 5rem;
-    font-weight: 250;
-    color: #6d6d6d;
+.logo-hover {
+    transition: transform 0.3s ease;
 }
 
-.container {
-    width: 80%;
-    margin: 10px auto;
-    display: flex;
-    justify-content: space-between;
+.logo-hover:hover {
+    transform: scale(1.05);
 }
 
-
-.logo {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    justify-content: baseline;
+.support-btn {
+    transition: all 0.3s ease;
 }
 
-a.support {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.support-btn:hover {
+    transform: rotate(15deg);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    color: #6d6d6d;
-    border: 2px solid #6d6d6d;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-}
-
-span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-@media (max-width: 1024px) {
-    .container {
-        width: 95%;
-
-    }
-
-    .logo {
-        /* flex-direction: column; */
-        align-items: start;
-    }
+:deep(.v-footer) {
+    border-top: 1px solid var(--v-border-color);
 }
 </style>

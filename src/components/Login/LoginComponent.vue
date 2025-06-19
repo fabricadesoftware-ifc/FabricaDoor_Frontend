@@ -1,10 +1,13 @@
- <script setup>
+<script setup>
 import { reactive, ref } from 'vue';
 import { LockOutline, LockOpenOutline } from '../icons';
 import { useAuthStore } from '@/stores';
 
 const isHovered = ref(false);
 const authStore = useAuthStore();
+const showPassword = ref(false);
+const loading = ref(false);
+const valid = ref(true);
 
 const dataUser = reactive({
     email: '',
@@ -17,41 +20,69 @@ const handleMouseEnter = () => {
 
 const handleMouseLeave = () => {
     isHovered.value = false;
-};</script>
+};
+
+const emailRules = [
+    v => !!v || 'E-mail é obrigatório',
+    v => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
+];
+
+const passwordRules = [
+    v => !!v || 'Senha é obrigatória',
+    v => v.length >= 6 || 'Senha deve ter no mínimo 6 caracteres',
+];
+
+const handleLogin = async () => {
+    if (!valid.value) return;
+    loading.value = true;
+    try {
+        await authStore.login(dataUser);
+    } finally {
+        loading.value = false;
+    }
+};
+
+const handleKeydown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleLogin();
+    }
+};
+</script>
 
 <template>
-    <main>
-        <section>
-            <div class="title">
-                <div style="display: flex; align-items: center;">
-                    <div class="logo">
-                        <component :is="isHovered ? LockOpenOutline : LockOutline" :size="60"
-                            @mouseover="handleMouseEnter" @mouseleave="handleMouseLeave" />
-                        <h2 to="/" class="title" @mouseover="handleMouseEnter" @mouseleave="handleMouseLeave">
-                            FabricaDoor</h2>
+    <v-container fluid class="fill-height bg-surface-variant">
+        <v-row align="center" justify="center">
+            <v-col cols="12" sm="8" md="6" lg="4">
+                <v-card class="mx-auto pa-6 rounded-xl" elevation="8">
+                    <div class="d-flex flex-column align-center mb-6">
+                        <div class="d-flex align-center" @mouseover="handleMouseEnter" @mouseleave="handleMouseLeave">
+                            <component :is="isHovered ? LockOpenOutline : LockOutline" :size="60" class="mb-2" />
+                            <h1 class="text-h4 font-weight-bold ml-2">FabricaDoor</h1>
+                        </div>
+                        <p class="text-subtitle-1 text-medium-emphasis mt-1">
+                            Entre para gerenciar o sistema de acesso
+                        </p>
                     </div>
-                </div>
-                <div>
-                    <p>Entre para gerenciar o sistema de acesso</p>
-                </div>
-            </div>
-            <div class="form">
-                <form @submit.prevent>
-                    <div class="input">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" v-model="dataUser.email" />
-                    </div>
-                    <div class="input">
-                        <label for="password">Senha:</label>
-                        <input type="password" id="password" v-model="dataUser.password" />
-                    </div>
-                    <div class="button">
-                        <button @click="authStore.login(dataUser)">Entrar</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-    </main>
+
+                    <v-form v-model="valid" @submit.prevent="handleLogin" @keydown="handleKeydown">
+                        <v-text-field v-model="dataUser.email" :rules="emailRules" label="E-mail"
+                            prepend-inner-icon="mdi-email" variant="outlined" required></v-text-field>
+
+                        <v-text-field v-model="dataUser.password" :rules="passwordRules"
+                            :type="showPassword ? 'text' : 'password'" label="Senha" prepend-inner-icon="mdi-lock"
+                            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" variant="outlined" required
+                            @click:append-inner="showPassword = !showPassword"></v-text-field>
+
+                        <v-btn block color="primary" size="large" type="submit" :loading="loading" :disabled="!valid"
+                            class="mt-2">
+                            Entrar
+                        </v-btn>
+                    </v-form>
+                </v-card>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <style scoped>
@@ -166,6 +197,6 @@ h2:hover::after {
     section {
         width: 80%;
     }
-    
+
 }
 </style>

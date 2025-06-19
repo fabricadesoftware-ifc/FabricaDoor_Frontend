@@ -1,19 +1,19 @@
 <script setup>
 import { computed } from "vue";
 import { useLoadingStore } from "@/stores/loading";
+
 defineProps({
-    img: String,
-    bgcolor: String
-})
+    img: String
+});
 
 const loadingStore = useLoadingStore();
 const isLoading = computed(() => loadingStore.isLoading);
 </script>
 
 <template>
-    <main :style="{ backgroundColor: bgcolor }" v-if="isLoading">
-        <img :src="img" alt="">
-    </main>
+    <v-overlay v-model="isLoading" class="align-center justify-center">
+        <v-img :src="img" max-width="300" class="mx-auto" />
+    </v-overlay>
 </template>
 
 <style scoped>

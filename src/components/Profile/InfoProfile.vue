@@ -2,58 +2,59 @@
 import { useAuthStore, useDoorStore } from '@/stores';
 import { OpenDoor } from '..';
 import { debounce } from 'lodash';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+
 const authStore = useAuthStore();
 const doorStore = useDoorStore();
 
-const ShowDataUsedTimes = (data) => {
-
-    if (data <= 50) {
-        return 'ta pouco';
-    } else if (data <= 100) {
-        return 'melhore';
-    } else if (data <= 150) {
-        return 'ta começando';
-    } else if (data <= 200) {
-        return 'ta bastante';
-    } else if (data <= 300) {
-        return 'ta interessante';
-    } else if (data <= 400) {
-        return 'vem bastante hein';
-    } else if (data >= 500) {
-        return 'já mora aqui';
-    }
-}
+const usageLevel = computed(() => {
+    const usedTimes = 1; // Substitua pelo valor real
+    if (usedTimes <= 50) return { text: 'Iniciante', color: 'info' };
+    if (usedTimes <= 100) return { text: 'Regular', color: 'primary' };
+    if (usedTimes <= 150) return { text: 'Frequente', color: 'success' };
+    if (usedTimes <= 200) return { text: 'Assíduo', color: 'success' };
+    if (usedTimes <= 300) return { text: 'Veterano', color: 'warning' };
+    if (usedTimes <= 400) return { text: 'Expert', color: 'warning' };
+    return { text: 'Master', color: 'error' };
+});
 
 const handleOpenDoor = debounce(() => {
     doorStore.openDoor(authStore.$state.authUser.token);
-}, 200); 
-
+}, 200);
 </script>
 
 <template>
-    <article>
-        <div class="photo">
-            <img src="https://door-api.fexcompany.me/avatar/mcquen.jpg"
-                alt="User Picture">
-        </div>
-        <div class="info">
-            <div class="align">
-                <h2>{{ authStore.$state.authUser.user.name }}</h2>
-                <p>{{ authStore.$state.authUser.user.email }}</p>
-                <div class="tags">
-                    <span class="admin" v-if="authStore.$state.authUser.user.isSuper">
-                        admin
-                    </span>
-                    <span class="tag">
-                        {{ ShowDataUsedTimes(1) }}
-                    </span>
+    <div class="d-flex flex-column flex-sm-row align-center gap-4">
+        <v-avatar size="120" class="border">
+            <v-img src="https://door-api.fexcompany.me/avatar/mcquen.jpg" alt="User Picture" />
+        </v-avatar>
+
+        <div class="flex-grow-1 text-center text-sm-start">
+            <div class="d-flex flex-column gap-2">
+                <h2 class="text-h5 font-weight-bold mb-1">
+                    {{ authStore.$state.authUser.user.name }}
+                </h2>
+
+                <p class="text-body-1 text-medium-emphasis">
+                    {{ authStore.$state.authUser.user.email }}
+                </p>
+
+                <div class="d-flex gap-2 justify-center justify-sm-start flex-wrap">
+                    <v-chip v-if="authStore.$state.authUser.user.isSuper" color="primary" size="small" label>
+                        Admin
+                    </v-chip>
+
+                    <v-chip :color="usageLevel.color" size="small" label>
+                        {{ usageLevel.text }}
+                    </v-chip>
                 </div>
             </div>
-            <OpenDoor @click="handleOpenDoor" />
-
         </div>
-    </article>
+
+        <div class="d-flex align-center">
+            <OpenDoor @click="handleOpenDoor" />
+        </div>
+    </div>
 </template>
 
 <style scoped>
