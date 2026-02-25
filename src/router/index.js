@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import DashBoardView from '../views/DashBoardView.vue'
+import ProfileView from '../views/ProfileView.vue'
+import SupportView from '../views/SupportView.vue'
 import { useAuthStore } from '@/stores'
 import api from '@/plugin/axios'
 
@@ -12,31 +16,31 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/login',
+      name: 'login',
+      component: LoginView
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
-      component: () => import('../views/DashBoardView.vue'),
+      component: DashBoardView,
       meta: {
         requiresAuth: true,
         requiresAdmin: true
       }
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/LoginView.vue')
-    },
-    {
       path: '/profile',
       name: 'profile',
-      component: () => import('../views/ProfileView.vue'),
+      component: ProfileView,
       meta: {
         requiresAuth: true
       }
     },
     {
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/TestView.vue')
+      path: '/support',
+      name: 'support',
+      component: SupportView
     }
   ]
 })

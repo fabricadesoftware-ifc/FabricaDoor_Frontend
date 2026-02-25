@@ -2,80 +2,50 @@ import api from '@/plugin/axios'
 import { useAuthStore } from '@/stores'
 
 class UsersService {
-  
-  async getUsers(token) {
-    const authStore = useAuthStore()
+  async getUsers() {
     try {
-      const response = await api.get('user/users', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const response = await api.get('user/users')
       return response.data
     } catch (error) {
-      if (error.response.status === 403) {
-        authStore.logout()
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
       }
       return error
     }
   }
 
-  async createUsers(token, data) {
-    const authStore = useAuthStore()
+  async createUsers(data) {
     try {
-      const response = await api.post(
-        'user/users',
-        data, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      )
+      const response = await api.post('user/users', data)
       return response.data
     } catch (error) {
-      if (error.response.status === 403) {
-        authStore.logout()
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
       }
       return error
     }
   }
 
-  async updateUser(token, data) {
-    const authStore = useAuthStore()
+  async updateUser(data) {
     try {
-      const response = await api.put(
-        `user/users/${data.id}`,
-        data, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      )
+      const response = await api.put(`user/users/${data.id}`, data)
       return response.data
     } catch (error) {
-      if (error.response.status === 403) {
-        authStore.logout()
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
       }
       return error
     }
   }
 
-  async deleteUsers(token, id) {
-    const authStore = useAuthStore()
+  async deleteUsers(id) {
     try {
-      const response = await api.delete(`user/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const response = await api.delete(`user/users/${id}`)
       return response.data
     } catch (error) {
-      if (error.response.status === 403) {
-        authStore.logout()
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
       }
-      console.error(error)
       return error
     }
   }

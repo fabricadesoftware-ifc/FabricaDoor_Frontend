@@ -1,145 +1,95 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { ModalLogsComp } from '..';
-import { ArrowExpand } from '@/components/icons';
+import { computed } from 'vue';
 import { useLogsStore } from '@/stores';
 
 const logsStore = useLogsStore();
-const showModalLogs = ref(false);
 
-const logs = ref([]);
-
-const formatDateTime = (dateTimeString) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-    const date = new Date(dateTimeString);
-    return date.toLocaleDateString('pt-BR', options);
-};
-
-onMounted(async () => {
-    await logsStore.getLogs();
-    logs.value = logsStore.state.logs.map(log => ({
+const recentLogs = computed(() => {
+    return logsStore.state.logs.slice(0, 15).map(log => ({
         ...log,
-        formattedDate: formatDateTime(log.date)
+        formattedDate: formatDateTime(log.date),
     }));
 });
+
+function formatDateTime(dateTimeString) {
+    const date = new Date(dateTimeString);
+    return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
 </script>
 
 <template>
-    <ModalLogsComp v-model:isOpen="showModalLogs" />
-    <article>
-        <div class="title">
-            Logs de Acesso Recentes
-            <ArrowExpand :size="30" @click="showModalLogs = true" />
-        </div>
+    <v-card height="100%" class="d-flex flex-column">
+        <v-card-item class="pb-0">
+            <div class="d-flex justify-space-between align-center mb-4">
+                <div class="d-flex align-center">
+                    <v-avatar color="primary" class="mr-4">
+                        <v-icon>mdi-history</v-icon>
+                    </v-avatar>
+                    <div>
+                        <v-card-title class="text-h5 pa-0">Logs de Acesso</v-card-title>
+                        <p class="text-caption text-medium-emphasis">Últimos 15 registros</p>
+                    </div>
+                </div>
+                <v-chip size="small" color="primary" variant="tonal">
+                    {{ logsStore.state.logs.length }} total
+                </v-chip>
+            </div>
+        </v-card-item>
 
-        <div class="list">
-            <div class="headerList">
-                <p>Data:</p>
-                <p>Menssagem:</p>
-            </div>
-            <div v-for="(log, index) in logs" :key="index" class="ItemTags">
-                <p>{{ log.formattedDate }}</p>
-                <p>{{ log.message }}</p>
-            </div>
-        </div>
-    </article>
+        <v-card-text class="flex-grow-1 pt-0">
+            <template v-if="logsStore.state.loading">
+                <v-skeleton-loader type="table-row@5" />
+            </template>
+
+            <template v-else-if="recentLogs.length === 0">
+                <div class="d-flex flex-column align-center justify-center py-12 text-center">
+                    <v-icon size="64" color="grey-lighten-1" class="mb-4">mdi-clipboard-text-clock-outline</v-icon>
+                    <p class="text-h6 text-medium-emphasis">Nenhum log encontrado</p>
+                    <p class="text-body-2 text-medium-emphasis">Os registros de acesso aparecerão aqui</p>
+                </div>
+            </template>
+
+            <template v-else>
+                <v-table fixed-header height="380px" density="comfortable">
+                    <thead>
+                        <tr>
+                            <th class="text-left text-on-surface font-weight-bold">Data</th>
+                            <th class="text-left text-on-surface font-weight-bold">Mensagem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(log, index) in recentLogs" :key="index" class="log-row">
+                            <td class="text-on-surface text-no-wrap">
+                                <v-icon size="14" class="mr-1" color="primary">mdi-clock-outline</v-icon>
+                                {{ log.formattedDate }}
+                            </td>
+                            <td class="text-on-surface">{{ log.message }}</td>
+                        </tr>
+                    </tbody>
+                </v-table>
+            </template>
+        </v-card-text>
+    </v-card>
 </template>
 
 <style scoped>
-article {
-    width: 100%;
-    border-radius: 15px;
-    border: 1px solid #ccc;
-    display: flex;
-    padding: 3rem;
-    flex-direction: column;
-    gap: 3rem;
+.log-row {
+    transition: background-color 0.2s ease;
 }
 
-.title {
-    font-size: 2rem;
-    font-weight: 600;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
+.log-row:hover {
+    background-color: rgba(var(--v-theme-primary), 0.04);
 }
 
-span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.headerList {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    color: #6d6d6d;
-    padding: 0 1rem;
-}
-
-.list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.ItemTags {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border-bottom: 1px solid #ccc;
-    height: 1000px;
-    margin: 10px auto;
-    flex-direction: column;
-    color: black;
-    padding: .5rem 1rem;
-    align-items: center;
-}
-
-button {
-    border: 0;
-    padding: .5rem;
-    border-radius: 15px;
-    color: #fff;
-    background-color: black;
-    cursor: pointer;
-    transition: .3s ease-in-out;
-}
-
-button:hover {
-    background-color: #000000dc;
-    color: #fff;
-}
-
-@media screen and (max-width: 1024px) {
-    .headerList {
-        display: none;
-    }
-
-    .ItemTags {
-        grid-template-columns: 1fr;
-        height: 100px;
-        padding: 0;
-    }
-    
-    article{
-        padding: 1rem;
-        width: 100%;
-    }
-
-    .list {
-        scrollbar-width: none; 
-        -ms-overflow-style: none; 
-    }
-
-    .list::-webkit-scrollbar {
-        display: none; 
-    }
-
-
+:deep(.v-table > .v-table__wrapper > table > thead > tr > th) {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 </style>

@@ -2,18 +2,25 @@ import api from '@/plugin/axios'
 import { useAuthStore } from '@/stores'
 
 class LogsService {
-  async getLogs(token) {
-    const authStore = useAuthStore()
+  async getLogs() {
     try {
-      const response = await api.get('logs/', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const response = await api.get('logs/')
       return response.data
     } catch (error) {
-      if (error.response.status === 403) {
-        authStore.logout()
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
+      }
+      return error
+    }
+  }
+
+  async getTodayCount() {
+    try {
+      const response = await api.get('logs/today')
+      return response.data
+    } catch (error) {
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
       }
       return error
     }

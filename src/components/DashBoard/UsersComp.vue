@@ -1,53 +1,26 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
-import { ModalUserComp, HoverButton, ModalAddUser } from '..';
+import { ref, computed } from 'vue';
+import { ModalUserComp, ModalAddUser } from '..';
 import { useUsersStore } from '@/stores';
-import { Cancel, Magnify, Account, CheckCircle } from '../icons';
-
-const iconComponents = { CheckCircle, Cancel };
 
 const usersStore = useUsersStore();
 const showModalUser = ref(false);
 const showModalAddUser = ref(false);
 const selected = ref({});
 const searchTerm = ref('');
-const screenWidth = ref(window.innerWidth);
 
 function openModalUser(data) {
     showModalUser.value = true;
     selected.value = data;
 }
 
-const closeModal = () => {
-    showModalUser.value = false;
-    showModalAddUser.value = false;
-};
-
-const handleEscapeKey = (event) => {
-    if (event.key === 'Escape') {
-        closeModal();
-    }
-};
-
-const updateScreenWidth = () => {
-    screenWidth.value = window.innerWidth;
-};
-
-onMounted(() => {
-    window.addEventListener('keydown', handleEscapeKey);
-    window.addEventListener('resize', updateScreenWidth);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('keydown', handleEscapeKey);
-    window.removeEventListener('resize', updateScreenWidth);
-});
-
 const filteredUsers = computed(() => {
-    if (!searchTerm.value) return usersStore.state.users.data?.users || [];
-    return usersStore.state.users.data?.users.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-    ) || [];
+    const users = usersStore.state.users.data?.users || [];
+    if (!searchTerm.value) return users;
+    return users.filter(user =>
+        user.name.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.value.toLowerCase())
+    );
 });
 </script>
 
@@ -55,162 +28,98 @@ const filteredUsers = computed(() => {
     <ModalUserComp v-model:isOpen="showModalUser" :object-selected="selected" />
     <ModalAddUser v-model:isOpen="showModalAddUser" />
 
-    <section>
-        <div class="title">
-            <h2>Usuários:
-                <Account />
-            </h2>
-            <div class="search">
-                <input type="text" placeholder="Buscar..." v-model="searchTerm" />
-            </div>
-            <span>
-                <HoverButton text="Adicionar +" :color="'black'" :hover-text-color="'white'"
-                    @click="showModalAddUser = !showModalAddUser" />
-            </span>
-        </div>
-
-        <div class="card-grid">
-            <div v-for="user in filteredUsers" :key="user.id" class="user-card">
-                <div class="card-content">
-                    <p><strong>ID:</strong> {{ user.id }}</p>
-                    <p><strong>Nome:</strong> {{ user.name }}</p>
-                    <div class="user-status">
-                        <p><strong>Super Usuário:
-
-                            </strong>
-                            <component :is="iconComponents[user.isSuper ? 'CheckCircle' : 'Cancel']" width="20"
-                                height="20" />
-                            {{ user.isSuper ? 'Sim' : 'Não' }}
-                        </p>
-                        <p><strong>Verificado:</strong>
-                            <component :is="iconComponents[user.isVerified ? 'CheckCircle' : 'Cancel']" width="20"
-                                height="20" />
-                            {{ user.isVerified ? 'Sim' : 'Não' }}
-                        </p>
+    <v-card height="100%" class="d-flex flex-column">
+        <v-card-item class="pb-0">
+            <div class="d-flex flex-wrap align-center justify-space-between ga-3 mb-4">
+                <div class="d-flex align-center">
+                    <v-avatar color="success" class="mr-4">
+                        <v-icon>mdi-account-group</v-icon>
+                    </v-avatar>
+                    <div>
+                        <v-card-title class="text-h5 pa-0">Usuários</v-card-title>
+                        <p class="text-caption text-medium-emphasis">Gerenciar usuários do sistema</p>
                     </div>
                 </div>
-                <div class="card-buttons">
-                    <HoverButton text="Editar" :color="'black'" :hover-text-color="'green'"
-                        @click="openModalUser(user)" />
+
+                <div class="d-flex align-center ga-3">
+                    <v-text-field v-model="searchTerm" prepend-inner-icon="mdi-magnify" placeholder="Buscar usuário..."
+                        variant="outlined" density="compact" hide-details style="min-width: 220px;" />
+                    <v-btn color="primary" @click="showModalAddUser = true" prepend-icon="mdi-plus">
+                        Adicionar
+                    </v-btn>
                 </div>
             </div>
-        </div>
-    </section>
+        </v-card-item>
+
+        <v-card-text class="flex-grow-1 pt-0">
+            <template v-if="usersStore.isLoading">
+                <v-row>
+                    <v-col v-for="n in 3" :key="n" cols="12" sm="6" md="4">
+                        <v-skeleton-loader type="card" />
+                    </v-col>
+                </v-row>
+            </template>
+
+            <template v-else-if="filteredUsers.length === 0">
+                <div class="d-flex flex-column align-center justify-center py-12 text-center">
+                    <v-icon size="64" color="grey-lighten-1" class="mb-4">mdi-account-off-outline</v-icon>
+                    <p class="text-h6 text-medium-emphasis">
+                        {{ searchTerm ? 'Nenhum usuário encontrado' : 'Nenhum usuário cadastrado' }}
+                    </p>
+                    <p class="text-body-2 text-medium-emphasis">
+                        {{ searchTerm ? 'Tente buscar com outro termo' : 'Adicione um novo usuário para começar' }}
+                    </p>
+                </div>
+            </template>
+
+            <template v-else>
+                <v-row class="overflow-y-auto" style="max-height: 420px;">
+                    <v-col v-for="user in filteredUsers" :key="user.id" cols="12" sm="6" md="4">
+                        <v-card variant="outlined" class="user-card h-100" @click="openModalUser(user)">
+                            <v-card-item>
+                                <div class="d-flex align-center mb-3">
+                                    <v-avatar color="primary" variant="tonal" size="40" class="mr-3">
+                                        <span class="text-subtitle-2 font-weight-bold">
+                                            {{ user.name?.charAt(0)?.toUpperCase() }}
+                                        </span>
+                                    </v-avatar>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <p class="text-subtitle-1 font-weight-medium text-truncate">{{ user.name }}</p>
+                                        <p class="text-caption text-medium-emphasis text-truncate">{{ user.email }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex ga-2">
+                                    <v-chip :color="user.isSuper ? 'warning' : 'default'" size="x-small"
+                                        variant="tonal">
+                                        <v-icon start size="12">{{ user.isSuper ? 'mdi-shield-crown' : 'mdi-account'
+                                            }}</v-icon>
+                                        {{ user.isSuper ? 'Admin' : 'Usuário' }}
+                                    </v-chip>
+                                    <v-chip :color="user.isVerified ? 'success' : 'error'" size="x-small"
+                                        variant="tonal">
+                                        <v-icon start size="12">{{ user.isVerified ? 'mdi-check-decagram' :
+                                            'mdi-alert-circle' }}</v-icon>
+                                        {{ user.isVerified ? 'Verificado' : 'Pendente' }}
+                                    </v-chip>
+                                </div>
+                            </v-card-item>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </template>
+        </v-card-text>
+    </v-card>
 </template>
 
 <style scoped>
-section {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 80%;
-    margin: 2rem auto;
-    padding: 1rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-}
-
-.title {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.title h2 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
 .user-card {
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.card-content {
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.user-status {
-    display: flex;
-    gap: 1rem;
-}
-
-.user-status p {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.card-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.search {
-    display: flex;
-    padding: .5rem 0;
-    border-radius: 15px;
-}
-
-.search input {
-    border: 2px solid #ccc;
-    padding: .5rem;
-    border-radius: 15px;
-    outline: none;
-}
-
-@media screen and (max-width: 1024px) {
-    .card-grid {
-        grid-template-columns: repeat(2, 1fr);
-        max-height: 400px;
-        overflow-y: auto;
-        scrollbar-width: none;
-    }
-
-    .card-grid::-webkit-scrollbar {
-        display: none; 
-    }
-
-    .title {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .user-status {
-        flex-direction: column;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    .card-grid {
-        grid-template-columns: 1fr;
-    }
-
-    section {
-        width: 90%;
-        padding: 2rem 1rem;
-    }
-
-    .search input {
-        width: 100%;
-    }
+.user-card:hover {
+    border-color: rgb(var(--v-theme-primary));
+    background-color: rgba(var(--v-theme-primary), 0.04);
 }
 </style>
