@@ -1,168 +1,111 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useTagsStore } from '@/stores';
-import { ModalComp, ModalTagsComp } from '..';
-import { ArrowExpand } from '../icons';
+import { ref, computed } from 'vue'
+import { useTagsStore } from '@/stores'
+import { ModalComp, ModalTagsComp } from '..'
+import { ArrowExpand } from '../icons'
 
-const tagsStore = useTagsStore();
-const tags = computed(() => tagsStore.state.tags);
+const tagsStore = useTagsStore()
+const tags = computed(() => tagsStore.state.tags)
 
 const orderedTags = computed(() => {
-    return tags.value.slice().sort((a, b) => {
-        return a.valid === b.valid ? 0 : a.valid ? -1 : 1;
-    });
-});
+  return tags.value.slice().sort((a, b) => {
+    return a.valid === b.valid ? 0 : a.valid ? -1 : 1
+  })
+})
 
-// Função para truncar RFID maior que 6 caracteres
 const truncateRFID = (rfid) => {
-    return rfid.length > 8 ? rfid.substring(0, 8) + '...' : rfid;
-};
+  if (!rfid) return '—'
+  return rfid.length > 8 ? rfid.substring(0, 8) + '...' : rfid
+}
 
-const showModal = ref(false);
-const showModalTags = ref(false);
-const selected = ref({});
-
-onMounted(async () => {
-    await tagsStore.getTags();
-});
+const showModal = ref(false)
+const showModalTags = ref(false)
+const selected = ref({})
 </script>
 
 <template>
-    <ModalComp v-model:isOpen="showModal" :objectSelected="selected" />
-    <ModalTagsComp v-model:isOpen="showModalTags" />
+  <ModalComp v-model:isOpen="showModal" :objectSelected="selected" />
+  <ModalTagsComp v-model:isOpen="showModalTags" />
 
-    <v-card height="100%" class="d-flex flex-column">
-        <v-card-item>
-            <div class="d-flex justify-space-between align-center mb-4">
-                <v-card-title class="text-h5">
-                    Gerenciar Tags
-                </v-card-title>
-                <v-btn icon @click="showModalTags = true">
-                    <ArrowExpand :size="30" />
-                </v-btn>
-            </div>
+  <v-card height="100%" class="d-flex flex-column">
+    <v-card-item class="pb-0">
+      <div class="d-flex justify-space-between align-center mb-4">
+        <div class="d-flex align-center">
+          <v-avatar color="primary" class="mr-4">
+            <v-icon>mdi-tag-multiple</v-icon>
+          </v-avatar>
+          <div>
+            <v-card-title class="text-h5 pa-0">Tags</v-card-title>
+            <p class="text-caption text-medium-emphasis">Gerenciar tags RFID</p>
+          </div>
+        </div>
+        <v-btn icon variant="tonal" color="primary" size="small" @click="showModalTags = true">
+          <ArrowExpand :size="20" />
+          <v-tooltip activator="parent" location="bottom">Ver todas as tags</v-tooltip>
+        </v-btn>
+      </div>
+    </v-card-item>
 
-            <v-table fixed-header height="400px">
-                <thead>
-                    <tr>
-                        <th class="text-left text-on-surface">Id da Tag</th>
-                        <th class="text-left text-on-surface">RFID</th>
-                        <th class="text-left text-on-surface">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in orderedTags" :key="item.id" @click="showModal = true; selected = item"
-                        style="cursor: pointer">
-                        <td class="text-on-surface">{{ item.id }}</td>
-                        <td class="text-on-surface">{{ truncateRFID(item.rfid) }}</td>
-                        <td>
-                            <v-chip :color="item.valid ? 'success' : 'error'" size="small" class="text-on-surface">
-                                <template v-slot:prepend>
-                                    <v-icon :icon="item.valid ? 'mdi-check-circle' : 'mdi-close-circle'" size="small" />
-                                </template>
-                                {{ item.valid ? 'Ativo' : 'Desativado' }}
-                            </v-chip>
-                        </td>
-                    </tr>
-                </tbody>
-            </v-table>
-        </v-card-item>
-    </v-card>
+    <v-card-text class="flex-grow-1 pt-0">
+      <template v-if="tagsStore.isLoading">
+        <v-skeleton-loader type="table-row@5" />
+      </template>
+
+      <template v-else-if="orderedTags.length === 0">
+        <div class="d-flex flex-column align-center justify-center py-12 text-center">
+          <v-icon size="64" color="grey-lighten-1" class="mb-4">mdi-tag-off-outline</v-icon>
+          <p class="text-h6 text-medium-emphasis">Nenhuma tag cadastrada</p>
+          <p class="text-body-2 text-medium-emphasis">As tags aparecerão aqui quando forem registradas</p>
+        </div>
+      </template>
+
+      <template v-else>
+        <v-table fixed-header height="380px" density="comfortable">
+          <thead>
+            <tr>
+              <th class="text-left text-on-surface font-weight-bold">ID</th>
+              <th class="text-left text-on-surface font-weight-bold">RFID</th>
+              <th class="text-left text-on-surface font-weight-bold">Usuário</th>
+              <th class="text-center text-on-surface font-weight-bold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in orderedTags" :key="item.id"
+              @click="showModal = true; selected = item" class="tag-row" style="cursor: pointer">
+              <td class="text-on-surface font-weight-medium">#{{ item.id }}</td>
+              <td class="text-on-surface">
+                <code class="text-body-2">{{ truncateRFID(item.rfid) }}</code>
+              </td>
+              <td class="text-on-surface">
+                <span v-if="item.user?.name">{{ item.user.name }}</span>
+                <span v-else class="text-medium-emphasis font-italic">Não atribuída</span>
+              </td>
+              <td class="text-center">
+                <v-chip :color="item.valid ? 'success' : 'error'" size="small" variant="tonal">
+                  <v-icon start :icon="item.valid ? 'mdi-check-circle' : 'mdi-close-circle'" size="14" />
+                  {{ item.valid ? 'Ativo' : 'Inativo' }}
+                </v-chip>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+      </template>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped>
-article {
-    width: 100%;
-    border-radius: 15px;
-    border: 1px solid #ccc;
-    display: flex;
-    padding: 3rem;
-    flex-direction: column;
-    gap: 3rem;
+.tag-row {
+  transition: background-color 0.2s ease;
 }
 
-.title {
-    font-size: 2rem;
-    font-weight: 600;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
+.tag-row:hover {
+  background-color: rgba(var(--v-theme-primary), 0.04);
 }
 
-.headerList {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr;
-    width: 95%;
-    color: #6d6d6d;
-    padding: 0 1rem;
-}
-
-.list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.ItemTags {
-    width: 95%;
-    display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr;
-    border-bottom: 1px solid #ccc;
-    height: 60px;
-    flex-direction: column;
-    color: black;
-    padding: 0rem 1rem;
-    align-items: center;
-}
-
-button {
-    border: 0;
-    padding: .5rem;
-    border-radius: 15px;
-    color: #fff;
-    background-color: black;
-    cursor: pointer;
-    transition: .3s ease-in-out;
-}
-
-button:hover {
-    background-color: #000000dc;
-    color: #fff;
-}
-
-span {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-@media screen and (max-width: 1024px) {
-    article {
-        padding: 1rem;
-        width: 100%;
-    }
-
-    .ItemTags {
-        grid-template-columns: 1fr 1.5fr 1fr;
-    }
-
-    .headerList {
-        grid-template-columns: 1fr 1.5fr 1fr;
-        position: sticky;
-        top: 0;
-        width: 100%;
-        padding: 0;
-    }
-
-    .list {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
-
-    .list::-webkit-scrollbar {
-        display: none;
-    }
+:deep(.v-table > .v-table__wrapper > table > thead > tr > th) {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 </style>

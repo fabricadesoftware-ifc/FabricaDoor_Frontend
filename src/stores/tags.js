@@ -1,7 +1,6 @@
 import { reactive, computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { TagsService } from '@/services'
-import { useAuthStore } from './auth'
 import router from '@/router'
 import { toast } from 'vue3-toastify'
 
@@ -12,15 +11,14 @@ export const useTagsStore = defineStore('tags', () => {
     loading: ref(false),
     error: null
   })
-  const store = useAuthStore()
-  const token = store.authUser.token
-  const countTags = computed(() => state.tags[0] ? state.tags.length : 0)
+
+  const countTags = computed(() => (state.tags[0] ? state.tags.length : 0))
 
   watch(
     () => state.error,
     (value) => {
       if (value) {
-        toast.error(value) // Exibe a mensagem de erro no toast
+        toast.error(value)
       }
     }
   )
@@ -30,7 +28,7 @@ export const useTagsStore = defineStore('tags', () => {
   const getTags = async () => {
     state.loading = true
     try {
-      const response = await TagsService.getTags(token)
+      const response = await TagsService.getTags()
       state.tags = response.data || []
     } catch (error) {
       state.error = error
@@ -42,11 +40,8 @@ export const useTagsStore = defineStore('tags', () => {
   const getMyTags = async (myId) => {
     state.loading = true
     try {
-      const response = await TagsService.getTags(token)
-      console.log(response.data)
-
+      const response = await TagsService.getTags()
       const myTags = response.data.filter((tag) => tag.user_id === myId)
-      console.log(myTags)
       state.myTags = myTags || []
     } catch (error) {
       state.error = error
@@ -56,18 +51,14 @@ export const useTagsStore = defineStore('tags', () => {
   }
 
   const assignTag = async (data) => {
-    try{
-      console.log(data)
-      const response = await TagsService.assignTag(token, data)
-      console.log(response.data)
+    try {
+      const response = await TagsService.assignTag(data)
       return response.data
-    }
-    catch (error) {
+    } catch (error) {
       state.error = error
     } finally {
       state.loading = false
     }
-
   }
 
   const updateTags = async (tag) => {
@@ -75,7 +66,7 @@ export const useTagsStore = defineStore('tags', () => {
     try {
       const index = state.tags.findIndex((s) => s.id === tag.id)
       if (index !== -1) {
-        state.tags[index] = await TagsService.updateTags(token, tag)
+        state.tags[index] = await TagsService.updateTags(tag.id, tag)
       }
     } catch (error) {
       state.error = error
@@ -91,7 +82,7 @@ export const useTagsStore = defineStore('tags', () => {
       if (index !== -1) {
         state.tags.splice(index, 1)
       }
-      await TagsService.deleteTags(token, id)
+      await TagsService.deleteTags(id)
       router.go(0)
     } catch (error) {
       state.error = error
@@ -100,10 +91,23 @@ export const useTagsStore = defineStore('tags', () => {
     }
   }
 
-  const verifyTag = async (tagId) =>{
+  const verifyTag = async (tagId) => {
     state.loading = true
     try {
-      const response = await TagsService.verifyTag(token, tagId)
+      const response = await TagsService.verifyTag(tagId)
+      router.go(0)
+      return response.data
+    } catch (error) {
+      state.error = error
+    } finally {
+      state.loading = false
+    }
+  }
+
+  const unassignTag = async (id) => {
+    state.loading = true
+    try {
+      const response = await TagsService.unassignTag(id)
       router.go(0)
       return response.data
     } catch (error) {
@@ -122,6 +126,7 @@ export const useTagsStore = defineStore('tags', () => {
     getMyTags,
     updateTags,
     deleteTags,
-    assignTag
+    assignTag,
+    unassignTag
   }
 })

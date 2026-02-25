@@ -2,47 +2,29 @@ import api from '@/plugin/axios'
 import { useAuthStore } from '@/stores'
 
 class DoorService {
-  async openDoor(token) {
-    const authStore = useAuthStore()
+  async openDoor() {
     try {
-      const response = await api.get('door/open', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const response = await api.get('door/open')
       return response.data
     } catch (error) {
-      console.error(error)
-      if (error.response.status === 403) {
-        authStore.logout()
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
       }
-
       return error
     }
   }
 
-  async toggleMode(token){{
-    const authStore = useAuthStore()
+  async toggleMode() {
     try {
-      const response = await api.get('door/mode', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      console.log(response)
+      const response = await api.get('door/mode')
       return response.data
     } catch (error) {
-      if (error.response.status === 403) {
-        authStore.logout()
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
       }
-      console.error(error)
       return error
     }
   }
-
-  }
-
-
 }
 
 export default new DoorService()

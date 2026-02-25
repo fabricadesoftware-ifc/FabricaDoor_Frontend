@@ -1,7 +1,6 @@
 import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { UsersService } from '@/services'
-import { useAuthStore } from './auth'
 import router from '@/router'
 
 export const useUsersStore = defineStore('users', () => {
@@ -13,12 +12,10 @@ export const useUsersStore = defineStore('users', () => {
   const isLoading = computed(() => state.loading)
   const countUsers = computed(() => state.users.data?.users.length)
 
-  const store = useAuthStore()
-  const token = store.authUser.token
   const getUsers = async () => {
     state.loading = true
     try {
-      state.users = await UsersService.getUsers(token)
+      state.users = await UsersService.getUsers()
     } catch (error) {
       state.error = error
     } finally {
@@ -29,7 +26,7 @@ export const useUsersStore = defineStore('users', () => {
   const createUsers = async (newUser) => {
     state.loading = true
     try {
-      state.users.push(await UsersService.createUsers(token, newUser))
+      state.users.push(await UsersService.createUsers(newUser))
       router.go(0)
     } catch (error) {
       state.error = error
@@ -40,11 +37,9 @@ export const useUsersStore = defineStore('users', () => {
 
   const updateUser = async (user) => {
     state.loading = true
-    console.log(user)
-    console.log(token)
     try {
       const index = state.users.data?.users.findIndex((s) => s.id === user.id)
-      state.users[index] = await UsersService.updateUser(token, user)
+      state.users[index] = await UsersService.updateUser(user)
       router.go(0)
     } catch (error) {
       state.error = error
@@ -56,10 +51,9 @@ export const useUsersStore = defineStore('users', () => {
   const deleteUser = async (id) => {
     state.loading = true
     try {
-      console.log(id)
       const index = state.users.data?.users.findIndex((s) => s.id === id)
       state.users.data?.users.splice(index, 1)
-      await UsersService.deleteUsers(token, id)
+      await UsersService.deleteUsers(id)
       router.go(0)
     } catch (error) {
       state.error = error

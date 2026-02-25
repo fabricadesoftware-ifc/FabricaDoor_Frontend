@@ -53,29 +53,33 @@ const handleKeydown = (e) => {
 <template>
     <v-container fluid class="fill-height bg-surface-variant">
         <v-row align="center" justify="center">
-            <v-col cols="12" sm="8" md="6" lg="4">
-                <v-card class="mx-auto pa-6 rounded-xl" elevation="8">
-                    <div class="d-flex flex-column align-center mb-6">
+            <v-col cols="11" sm="6" md="5" lg="3">
+                <v-card class="mx-auto pa-5 rounded-xl" elevation="4" max-width="380">
+                    <div class="d-flex flex-column align-center mb-5">
                         <div class="d-flex align-center" @mouseover="handleMouseEnter" @mouseleave="handleMouseLeave">
-                            <component :is="isHovered ? LockOpenOutline : LockOutline" :size="60" class="mb-2" />
-                            <h1 class="text-h4 font-weight-bold ml-2">FabricaDoor</h1>
+                            <component :is="isHovered ? LockOpenOutline : LockOutline" :size="36" />
+                            <h1 class="text-h5 font-weight-bold ml-2">FabricaDoor</h1>
                         </div>
-                        <p class="text-subtitle-1 text-medium-emphasis mt-1">
+                        <p class="text-body-2 text-medium-emphasis mt-1">
                             Entre para gerenciar o sistema de acesso
                         </p>
                     </div>
 
                     <v-form v-model="valid" @submit.prevent="handleLogin" @keydown="handleKeydown">
                         <v-text-field v-model="dataUser.email" :rules="emailRules" label="E-mail"
-                            prepend-inner-icon="mdi-email" variant="outlined" required></v-text-field>
+                            prepend-inner-icon="mdi-email" variant="outlined" density="comfortable"
+                            name="email" type="email" autocomplete="email"
+                            required></v-text-field>
 
                         <v-text-field v-model="dataUser.password" :rules="passwordRules"
                             :type="showPassword ? 'text' : 'password'" label="Senha" prepend-inner-icon="mdi-lock"
-                            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" variant="outlined" required
+                            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" variant="outlined"
+                            density="comfortable" name="password" autocomplete="current-password"
+                            required
                             @click:append-inner="showPassword = !showPassword"></v-text-field>
 
-                        <v-btn block color="primary" size="large" type="submit" :loading="loading" :disabled="!valid"
-                            class="mt-2">
+                        <v-btn block color="primary" type="submit" :loading="loading" :disabled="!valid"
+                            class="mt-3">
                             Entrar
                         </v-btn>
                     </v-form>
@@ -86,117 +90,4 @@ const handleKeydown = (e) => {
 </template>
 
 <style scoped>
-main {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* background-color: #f1f1f1; */
-}
-
-section {
-    width: 20%;
-    height: 60vh;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
-    padding: 3% 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-    justify-content: space-around;
-    border: 1px solid #ccc;
-}
-
-.title {
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-    align-items: center;
-    width: 80%;
-    text-align: center;
-}
-
-h1 {
-    font-size: 2rem;
-    font-weight: 600;
-}
-
-div>p {
-    font-size: 1rem;
-    color: #6d6d6d;
-}
-
-input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    width: 100%;
-    background-color: #000;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-}
-
-button:hover {
-    background-color: #333;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-}
-
-.form {
-    width: 80%;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-
-h2 {
-    text-decoration: none;
-    position: relative;
-    transition: color 0.3s ease-in-out;
-}
-
-h2::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    bottom: -3px;
-    width: 0;
-    height: 2px;
-    background-color: #6d6d6d;
-    transition: width 0.3s ease-in-out;
-}
-
-h2:hover {
-    color: #6d6d6d;
-}
-
-h2:hover::after {
-    width: 100%;
-}
-
-@media screen and (max-width: 1024px) {
-    section {
-        width: 80%;
-    }
-
-}
 </style>

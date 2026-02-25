@@ -1,77 +1,65 @@
 <script setup>
-import { onMounted } from 'vue';
-import { useUsersStore, useTagsStore } from '@/stores';
+import { computed } from 'vue';
+import { useUsersStore, useTagsStore, useLogsStore } from '@/stores';
 import { TagMultipleOutline, Account, DoorOpen } from '../icons';
 
 const usersStore = useUsersStore();
 const tagsStore = useTagsStore();
+const logsStore = useLogsStore();
 
-onMounted(async () => {
-    await usersStore.getUsers();
-    await tagsStore.getTags();
+const todayAccessCount = computed(() => logsStore.state.todayCount);
+
+const activeTagsCount = computed(() => {
+    return tagsStore.state.tags.filter(tag => tag.valid).length;
 });
+
+const cards = computed(() => [
+    {
+        title: 'Tags Cadastradas',
+        value: tagsStore.countTags,
+        subtitle: `${activeTagsCount.value} ativas`,
+        icon: TagMultipleOutline,
+        color: 'primary',
+        loading: tagsStore.isLoading,
+    },
+    {
+        title: 'Usuários Ativos',
+        value: usersStore.countUsers ?? 0,
+        subtitle: 'Cadastrados no sistema',
+        icon: Account,
+        color: 'success',
+        loading: usersStore.isLoading,
+    },
+    {
+        title: 'Acessos Hoje',
+        value: todayAccessCount.value,
+        subtitle: `${logsStore.state.logs.length} registros total`,
+        icon: DoorOpen,
+        color: 'info',
+        loading: logsStore.state.loading,
+    },
+]);
 </script>
 
 <template>
     <v-row>
-        <v-col cols="12" sm="4">
-            <v-card elevation="1" class="h-100 card-hover">
+        <v-col v-for="(card, i) in cards" :key="i" cols="12" sm="4">
+            <v-card class="h-100 card-hover" elevation="1">
                 <v-card-item>
-                    <template v-if="tagsStore.isLoading">
-                        <v-skeleton-loader type="card" />
+                    <template v-if="card.loading">
+                        <v-skeleton-loader type="list-item-avatar-two-line" />
                     </template>
                     <template v-else>
-                        <div class="d-flex align-center mb-4">
-                            <v-avatar color="primary" class="mr-4">
-                                <TagMultipleOutline :size="24" color="white" />
+                        <div class="d-flex align-center mb-3">
+                            <v-avatar :color="card.color" class="mr-4" size="48">
+                                <component :is="card.icon" :size="24" color="white" />
                             </v-avatar>
-                            <v-card-title class="text-h6 text-on-surface">Tags</v-card-title>
+                            <div>
+                                <p class="text-body-2 text-medium-emphasis mb-1">{{ card.title }}</p>
+                                <p class="text-h4 font-weight-bold text-on-surface">{{ card.value }}</p>
+                            </div>
                         </div>
-                        <v-card-text class="text-h4 text-on-surface pa-0">
-                            {{ tagsStore.countTags }}
-                        </v-card-text>
-                    </template>
-                </v-card-item>
-            </v-card>
-        </v-col>
-
-        <v-col cols="12" sm="4">
-            <v-card elevation="1" class="h-100 card-hover">
-                <v-card-item>
-                    <template v-if="usersStore.isLoading">
-                        <v-skeleton-loader type="card" />
-                    </template>
-                    <template v-else>
-                        <div class="d-flex align-center mb-4">
-                            <v-avatar color="success" class="mr-4">
-                                <Account :size="24" color="white" />
-                            </v-avatar>
-                            <v-card-title class="text-h6 text-on-surface">Usuários Ativos</v-card-title>
-                        </div>
-                        <v-card-text class="text-h4 text-on-surface pa-0">
-                            {{ usersStore.countUsers }}
-                        </v-card-text>
-                    </template>
-                </v-card-item>
-            </v-card>
-        </v-col>
-
-        <v-col cols="12" sm="4">
-            <v-card elevation="1" class="h-100 card-hover">
-                <v-card-item>
-                    <template v-if="tagsStore.isLoading">
-                        <v-skeleton-loader type="card" />
-                    </template>
-                    <template v-else>
-                        <div class="d-flex align-center mb-4">
-                            <v-avatar color="info" class="mr-4">
-                                <DoorOpen :size="24" color="white" />
-                            </v-avatar>
-                            <v-card-title class="text-h6 text-on-surface">Acessos Hoje</v-card-title>
-                        </div>
-                        <v-card-text class="text-h4 text-on-surface pa-0">
-                            10
-                        </v-card-text>
+                        <p class="text-caption text-medium-emphasis">{{ card.subtitle }}</p>
                     </template>
                 </v-card-item>
             </v-card>
@@ -80,36 +68,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-section {
-    width: 80%;
-    margin: 3rem auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.title {
-    font-size: 2rem;
-    font-weight: 600;
-}
-
-.cards {
-    width: 100%;
-    display: flex;
-    gap: 1rem;
-    justify-content: space-between;
-}
-
-@media screen and (max-width: 1024px) {
-    section {
-        width: 90%;
-    }
-
-    .cards {
-        flex-direction: column;
-    }
-}
-
 .card-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid transparent;
@@ -117,7 +75,6 @@ section {
 
 .card-hover:hover {
     transform: translateY(-4px);
-    border-color: var(--v-border-color);
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.05), 0 10px 10px rgba(0, 0, 0, 0.02) !important;
 }
 </style>
