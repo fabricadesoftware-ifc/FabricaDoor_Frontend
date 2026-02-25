@@ -7,6 +7,7 @@ import { ref } from 'vue'
 export const useAuthStore = defineStore('auth', () => {
   const authUser = useStorage('authUser', {
     token: null,
+    refreshToken: null,
     isLogged: false,
     user: {
       email: '',
@@ -20,16 +21,21 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isLoading = ref(false)
 
+  const setTokens = (token, refreshToken) => {
+    authUser.value.token = token
+    authUser.value.refreshToken = refreshToken
+  }
+
   const login = async (data) => {
     isLoading.value = true
     try {
       const response = await AuthService.login(data)
-      console.log(response)
       if (response.data.isVerified == false) {
         logout()
       } else {
         authUser.value = {
           token: response.token,
+          refreshToken: response.refreshToken,
           isLogged: true,
           user: {
             email: data.email,
@@ -56,8 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const register = async (data) => {
     try {
-      const response = await AuthService.register(data)
-      console.log(response)
+      await AuthService.register(data)
     } catch (error) {
       console.error(error)
     }
@@ -74,6 +79,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     authUser,
+    setTokens,
     logout,
     login,
     register,
