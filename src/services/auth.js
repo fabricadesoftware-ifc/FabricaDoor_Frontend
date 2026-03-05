@@ -23,6 +23,24 @@ class AuthService {
     }
   }
 
+  async forgetPassword(email) {
+    try {
+      const response = await api.post('auth/forget', { email })
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async resetPassword({ token, newPassword }) {
+    try {
+      const response = await api.post('auth/reset', { token, newPassword })
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  }
+
   async register(data) {
     try {
       const response = await api.post('auth/register/', data)
