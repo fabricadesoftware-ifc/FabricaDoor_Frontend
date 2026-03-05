@@ -1,13 +1,46 @@
 <script setup>
-import { ViewDashboard, Account } from '@/components/icons';
-import { useAuthStore } from '@/stores';
+import { ref } from 'vue';
+import { ViewDashboard, Account, DoorOpen } from '@/components/icons';
+import { useAuthStore, useDoorStore } from '@/stores';
+import { toast } from 'vue3-toastify';
+import { useHaptic } from '@/composables/useHaptic';
 
 const authStore = useAuthStore();
+const doorStore = useDoorStore();
+const haptic = useHaptic();
+const isDoorOpening = ref(false);
+const doorCooldown = ref(false);
+
+const handleOpenDoor = async () => {
+    if (doorCooldown.value) return;
+    haptic.tapHeavy();
+    isDoorOpening.value = true;
+    doorCooldown.value = true;
+    try {
+        await doorStore.openDoor();
+        haptic.doorOpen();
+        toast.success('Porta aberta com sucesso!');
+    } catch {
+        haptic.error();
+        toast.error('Erro ao abrir a porta');
+    } finally {
+        isDoorOpening.value = false;
+        setTimeout(() => {
+            doorCooldown.value = false;
+        }, 5000);
+    }
+};
 </script>
 
 <template>
     <nav>
         <ul>
+            <li v-if="authStore.$state.authUser.isLogged">
+                <a @click="handleOpenDoor" :class="{ 'door-disabled': doorCooldown }" class="door-link">
+                    <component :is="DoorOpen" :size="30" />
+                    <span>{{ doorCooldown ? 'Aguarde...' : 'Abrir Porta' }}</span>
+                </a>
+            </li>
             <li v-if="authStore.$state.authUser.user.isSuper">
                 <router-link to="/dashboard">
                     <component :is="ViewDashboard" :size="30" />
@@ -72,5 +105,14 @@ img {
 .logout {
     cursor: pointer;
     color: red;
+}
+
+.door-link {
+    cursor: pointer;
+}
+
+.door-disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
 </style>

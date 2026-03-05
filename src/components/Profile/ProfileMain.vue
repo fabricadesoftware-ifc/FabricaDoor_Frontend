@@ -1,5 +1,6 @@
 <script setup>
 import { InfoProfile, MyTags } from '..';
+import DoorAccessCard from './DoorAccessCard.vue';
 import { useTagsStore } from '@/stores';
 
 const tagsStore = useTagsStore();
@@ -9,6 +10,8 @@ const tagsStore = useTagsStore();
     <v-container class="py-8">
         <v-row justify="center">
             <v-col cols="12" md="8">
+                <DoorAccessCard class="mb-6" />
+
                 <v-card class="rounded-lg">
                     <v-card-text>
                         <InfoProfile />

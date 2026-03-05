@@ -1,5 +1,5 @@
 <script setup>
-import {  onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { Magnify, NoteTextOutline } from '../icons';
 import { useLogsStore } from '@/stores';
 
@@ -9,6 +9,7 @@ const props = defineProps({
 });
 
 const logsStore = useLogsStore();
+const scrollContainer = ref(null);
 
 const emit = defineEmits(["update:isOpen"]);
 
@@ -25,6 +26,15 @@ const handleClickOutside = (event) => {
 const handleEscKey = (event) => {
   if (event.key === 'Escape') {
     closeModal();
+  }
+};
+
+const handleScroll = () => {
+  const el = scrollContainer.value;
+  if (!el) return;
+  const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
+  if (nearBottom && logsStore.hasMore && !logsStore.state.loadingMore) {
+    logsStore.loadMore();
   }
 };
 
@@ -58,14 +68,21 @@ onUnmounted(() => {
         </span>
       </div>
 
-      <div class="card-grid">
+      <div class="card-grid" ref="scrollContainer" @scroll="handleScroll">
         <div v-for="(log, index) in logsStore.state.logs" :key="index" class="log-card">
           <div class="card-content">
-            <p><strong>ID da Tag:</strong> {{ log.id }}</p>
-            <p><strong>ID da Tag:</strong> {{ log.type }}</p>
-            <p><strong>ID da Tag:</strong> {{ log.message }}</p>
-            <p><strong>ID da Tag:</strong> {{ log.date }}</p>
+            <p><strong>ID:</strong> {{ log.id }}</p>
+            <p><strong>Tipo:</strong> {{ log.type }}</p>
+            <p><strong>Mensagem:</strong> {{ log.message }}</p>
+            <p><strong>Data:</strong> {{ log.date }}</p>
           </div>
+        </div>
+
+        <div v-if="logsStore.state.loadingMore" class="loading-more">
+          Carregando mais logs...
+        </div>
+        <div v-if="!logsStore.hasMore && logsStore.state.logs.length > 0" class="end-message">
+          Todos os logs foram carregados
         </div>
       </div>
     </section>
@@ -190,5 +207,14 @@ span {
   .close {
     font-size: 1.5rem;
   }
+}
+
+.loading-more,
+.end-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 1rem;
+  color: #6d6d6d;
+  font-size: 0.9rem;
 }
 </style>

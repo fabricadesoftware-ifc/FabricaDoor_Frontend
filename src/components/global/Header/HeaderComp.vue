@@ -2,14 +2,40 @@
 import { ref, onMounted } from 'vue';
 import { SideBar } from '@/components';
 import { LockOpenOutline, LockOutline } from '@/components/icons';
-import { useAuthStore } from '@/stores';
+import { useAuthStore, useDoorStore } from '@/stores';
 import { useTheme } from 'vuetify';
+import { toast } from 'vue3-toastify';
+import { useHaptic } from '@/composables/useHaptic';
 
 const theme = useTheme();
 const authStore = useAuthStore();
+const doorStore = useDoorStore();
+const haptic = useHaptic();
 const isMobile = ref(false);
 const isHovered = ref(false);
 const drawer = ref(false);
+const isDoorOpening = ref(false);
+const doorCooldown = ref(false);
+
+const handleQuickOpenDoor = async () => {
+    if (doorCooldown.value) return;
+    haptic.tapMedium();
+    isDoorOpening.value = true;
+    doorCooldown.value = true;
+    try {
+        await doorStore.openDoor();
+        haptic.success();
+        toast.success('Porta aberta com sucesso!');
+    } catch {
+        haptic.error();
+        toast.error('Erro ao abrir a porta');
+    } finally {
+        isDoorOpening.value = false;
+        setTimeout(() => {
+            doorCooldown.value = false;
+        }, 5000);
+    }
+};
 
 const handleMouseEnter = () => {
     isHovered.value = true;
@@ -48,6 +74,14 @@ onMounted(() => {
             <v-spacer></v-spacer>
 
             <template v-if="!isMobile">
+                <v-btn v-if="authStore.authUser.isLogged" :loading="isDoorOpening" :disabled="doorCooldown"
+                    icon variant="tonal" color="primary" class="mr-2" @click="handleQuickOpenDoor">
+                    <v-icon>mdi-door-open</v-icon>
+                    <v-tooltip activator="parent" location="bottom">
+                        {{ doorCooldown ? 'Aguarde...' : 'Abrir Porta' }}
+                    </v-tooltip>
+                </v-btn>
+
                 <v-btn icon @click="toggleTheme" class="mr-2">
                     <v-icon>{{ theme.global.current.value.dark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
                 </v-btn>

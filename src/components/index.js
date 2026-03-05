@@ -23,6 +23,7 @@ import ProfileMain from "./Profile/ProfileMain.vue"
 import ModalAddUser from "./DashBoard/ModalAddUser.vue"
 import ToggleMode from "./global/Buttons/ToggleMode.vue"
 import DoorControlComp from "./DashBoard/DoorControlComp.vue"
+import DoorAccessCard from "./Profile/DoorAccessCard.vue"
 
 export {
     AssignUserTagComp,
@@ -50,4 +51,5 @@ export {
     ModalAddUser,
     ToggleMode,
     DoorControlComp,
+    DoorAccessCard,
 }
