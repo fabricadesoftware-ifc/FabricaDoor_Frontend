@@ -14,8 +14,8 @@ export const useLogsStore = defineStore('log', () => {
       page: 0,
       limit: 20,
       totalLogs: 0,
-      totalPages: 0,
-    },
+      totalPages: 0
+    }
   })
 
   const hasMore = computed(() => state.pagination.page < state.pagination.totalPages)
@@ -36,7 +36,7 @@ export const useLogsStore = defineStore('log', () => {
     try {
       const response = await LogsService.getLogs({
         page: 1,
-        limit: state.pagination.limit,
+        limit: state.pagination.limit
       })
       state.logs = response.data || []
       if (response.pagination) {
@@ -58,7 +58,7 @@ export const useLogsStore = defineStore('log', () => {
     try {
       const response = await LogsService.getLogs({
         page: nextPage,
-        limit: state.pagination.limit,
+        limit: state.pagination.limit
       })
       const newLogs = response.data || []
       state.logs.push(...newLogs)
@@ -97,6 +97,6 @@ export const useLogsStore = defineStore('log', () => {
     getLogs,
     loadMore,
     resetLogs,
-    getTodayCount,
+    getTodayCount
   }
 })

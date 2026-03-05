@@ -21,7 +21,7 @@ export default defineConfig({
         'lock-outline.svg',
         'apple-touch-icon.svg',
         'loadingLight.gif',
-        'loadingDark.gif',
+        'loadingDark.gif'
       ],
       manifest: {
         name: 'FabricaDoor - Controle de Acesso',
@@ -38,15 +38,15 @@ export default defineConfig({
             src: 'pwa-192x192.svg',
             sizes: '192x192',
             type: 'image/svg+xml',
-            purpose: 'any',
+            purpose: 'any'
           },
           {
             src: 'pwa-512x512.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-            purpose: 'any maskable',
-          },
-        ],
+            purpose: 'any maskable'
+          }
+        ]
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,gif,ico,woff2}'],
@@ -58,12 +58,12 @@ export default defineConfig({
               cacheName: 'google-fonts',
               expiration: {
                 maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 ano
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 ano
               },
               cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
+                statuses: [0, 200]
+              }
+            }
           },
           {
             urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i,
@@ -72,12 +72,12 @@ export default defineConfig({
               cacheName: 'cdn-assets',
               expiration: {
                 maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 dias
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 dias
               },
               cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
+                statuses: [0, 200]
+              }
+            }
           },
           {
             urlPattern: /\/api\/.*$/i,
@@ -86,17 +86,17 @@ export default defineConfig({
               cacheName: 'api-cache',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 5, // 5 min
+                maxAgeSeconds: 60 * 5 // 5 min
               },
               networkTimeoutSeconds: 10,
               cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-        ],
-      },
-    }),
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      }
+    })
   ],
   resolve: {
     alias: {

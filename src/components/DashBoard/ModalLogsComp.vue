@@ -1,54 +1,54 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
-import { Magnify, NoteTextOutline } from '../icons';
-import { useLogsStore } from '@/stores';
+import { onMounted, onUnmounted, ref } from 'vue'
+import { Magnify, NoteTextOutline } from '../icons'
+import { useLogsStore } from '@/stores'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
-  isOpen: Boolean,
-});
+  isOpen: Boolean
+})
 
-const logsStore = useLogsStore();
-const scrollContainer = ref(null);
+const logsStore = useLogsStore()
+const scrollContainer = ref(null)
 
-const emit = defineEmits(["update:isOpen"]);
+const emit = defineEmits(['update:isOpen'])
 
 const closeModal = () => {
-  emit("update:isOpen", false);
-};
+  emit('update:isOpen', false)
+}
 
 const handleClickOutside = (event) => {
   if (event.target.closest('section') === null) {
-    closeModal();
+    closeModal()
   }
-};
+}
 
 const handleEscKey = (event) => {
   if (event.key === 'Escape') {
-    closeModal();
+    closeModal()
   }
-};
+}
 
 const handleScroll = () => {
-  const el = scrollContainer.value;
-  if (!el) return;
-  const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
+  const el = scrollContainer.value
+  if (!el) return
+  const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100
   if (nearBottom && logsStore.hasMore && !logsStore.state.loadingMore) {
-    logsStore.loadMore();
+    logsStore.loadMore()
   }
-};
+}
 
-onMounted(async() => {
-  window.addEventListener('click', handleClickOutside);
-  window.addEventListener('keydown', handleEscKey);
+onMounted(async () => {
+  window.addEventListener('click', handleClickOutside)
+  window.addEventListener('keydown', handleEscKey)
 
-  await logsStore.getLogs();
-});
+  await logsStore.getLogs()
+})
 
 onUnmounted(() => {
-  window.removeEventListener('click', handleClickOutside);
-  window.removeEventListener('keydown', handleEscKey);
-});
+  window.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('keydown', handleEscKey)
+})
 </script>
 
 <template>
@@ -78,9 +78,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div v-if="logsStore.state.loadingMore" class="loading-more">
-          Carregando mais logs...
-        </div>
+        <div v-if="logsStore.state.loadingMore" class="loading-more">Carregando mais logs...</div>
         <div v-if="!logsStore.hasMore && logsStore.state.logs.length > 0" class="end-message">
           Todos os logs foram carregados
         </div>
@@ -148,13 +146,13 @@ span {
 
 .search {
   display: flex;
-  padding: .5rem 0;
+  padding: 0.5rem 0;
   border-radius: 15px;
 }
 
 .search input {
   border: 2px solid #ccc;
-  padding: .5rem;
+  padding: 0.5rem;
   border-radius: 15px;
   outline: none;
 }

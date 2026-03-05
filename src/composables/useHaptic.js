@@ -50,6 +50,6 @@ export function useHaptic() {
     error,
     warning,
     doorOpen,
-    cancel,
+    cancel
   }
 }
