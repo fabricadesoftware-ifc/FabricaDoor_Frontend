@@ -34,19 +34,19 @@ class TagsService {
       if (error.response?.status === 403) {
         useAuthStore().logout()
       }
-      return error
+      throw error
     }
   }
 
   async verifyTag(id) {
     try {
-      const response = await api.put(`tags/update/${Number(id)}/`, {})
+      const response = await api.put(`tags/update/${Number(id)}`)
       return response.data
     } catch (error) {
       if (error.response?.status === 403) {
         useAuthStore().logout()
       }
-      return error
+      throw error
     }
   }
 
@@ -58,19 +58,19 @@ class TagsService {
       if (error.response?.status === 403) {
         useAuthStore().logout()
       }
-      return error
+      throw error
     }
   }
 
-  async unassignTag(id) {
+  async unassignTag({ rfid, userId }) {
     try {
-      const response = await api.post(`tags/unassign/${id}/`, {})
+      const response = await api.post('tags/desassign', { rfid, userId })
       return response.data
     } catch (error) {
       if (error.response?.status === 403) {
         useAuthStore().logout()
       }
-      return error
+      throw error
     }
   }
 }

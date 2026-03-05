@@ -1,54 +1,66 @@
 <script setup>
-import { reactive, watch } from 'vue';
-import { useUsersStore, useTagsStore } from '@/stores';
-import { AlertOutline } from '../icons';
+import { reactive, watch } from 'vue'
+import { useUsersStore, useTagsStore } from '@/stores'
+import { AlertOutline } from '../icons'
 
-const usersStore = useUsersStore();
-const tagsStore = useTagsStore();
+const usersStore = useUsersStore()
+const tagsStore = useTagsStore()
 
 const props = defineProps({
   isOpen: Boolean,
-  objectSelected: Object,
-});
+  objectSelected: Object
+})
 
-const emit = defineEmits(["update:isOpen"]);
+const emit = defineEmits(['update:isOpen'])
 
 const closeModal = () => {
-  emit("update:isOpen", false);
-};
+  emit('update:isOpen', false)
+}
 
 const data = reactive({
   rfid: null,
-  userId: 0,
-});
+  userId: 0
+})
 
 watch(
   () => props.objectSelected,
   (newVal) => {
-    data.rfid = String(newVal?.rfid) || null;
-    data.userId = 0;
+    data.rfid = String(newVal?.rfid) || null
+    data.userId = 0
   },
   { immediate: true }
-);
+)
 
 const handleAssign = async () => {
-  await tagsStore.assignTag(data);
-  closeModal();
-};
+  await tagsStore.assignTag(data)
+  closeModal()
+}
+
+const handleUnassign = async () => {
+  await tagsStore.unassignTag({
+    id: props.objectSelected?.id,
+    rfid: props.objectSelected?.rfid,
+    userId: props.objectSelected?.user_id
+  })
+  closeModal()
+}
 </script>
 
 <template>
-  <v-dialog :model-value="isOpen" @update:model-value="emit('update:isOpen', $event)" max-width="500"
-    transition="dialog-bottom-transition" persistent>
+  <v-dialog
+    :model-value="isOpen"
+    @update:model-value="emit('update:isOpen', $event)"
+    max-width="500"
+    transition="dialog-bottom-transition"
+    persistent
+  >
     <v-card class="rounded-lg">
       <v-card-item>
         <div class="d-flex align-center mb-4">
           <v-avatar color="info" class="mr-4">
             <AlertOutline :size="24" color="white" />
           </v-avatar>
-          <v-card-title class="text-h6">
-            Atribuir Tag a Usuário
-          </v-card-title>
+          <v-card-title class="text-h6"> Atribuir Tag a Usuário </v-card-title>
           <v-spacer></v-spacer>
           <v-btn icon variant="text" @click="closeModal">
             <v-icon>mdi-close</v-icon>
@@ -79,8 +91,10 @@ const handleAssign = async () => {
 
             <v-list-item>
               <template v-slot:prepend>
-                <v-icon :color="objectSelected?.valid ? 'success' : 'error'"
-                  :icon="objectSelected?.valid ? 'mdi-check-circle' : 'mdi-close-circle'" />
+                <v-icon
+                  :color="objectSelected?.valid ? 'success' : 'error'"
+                  :icon="objectSelected?.valid ? 'mdi-check-circle' : 'mdi-close-circle'"
+                />
               </template>
               <v-list-item-title>Status</v-list-item-title>
               <v-list-item-subtitle>
@@ -91,9 +105,16 @@ const handleAssign = async () => {
             </v-list-item>
           </v-list>
 
-          <v-select v-model="data.userId" :items="usersStore.state.users?.data?.users || []" item-title="name"
-            item-value="id" label="Selecionar Usuário" prepend-inner-icon="mdi-account" variant="outlined"
-            class="mt-4" />
+          <v-select
+            v-model="data.userId"
+            :items="usersStore.state.users?.data?.users || []"
+            item-title="name"
+            item-value="id"
+            label="Selecionar Usuário"
+            prepend-inner-icon="mdi-account"
+            variant="outlined"
+            class="mt-4"
+          />
         </v-card-text>
       </v-card-item>
 
@@ -101,12 +122,22 @@ const handleAssign = async () => {
 
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>
-        <v-btn color="warning" variant="tonal" prepend-icon="mdi-account-remove"
-          @click="tagsStore.unassignTag(props.objectSelected?.id)" class="text-none">
+        <v-btn
+          color="warning"
+          variant="tonal"
+          prepend-icon="mdi-account-remove"
+          @click="handleUnassign"
+          class="text-none"
+        >
           Desvincular
         </v-btn>
-        <v-btn color="primary" :disabled="!data.userId" @click="handleAssign" class="text-none"
-          prepend-icon="mdi-account-plus">
+        <v-btn
+          color="primary"
+          :disabled="!data.userId"
+          @click="handleAssign"
+          class="text-none"
+          prepend-icon="mdi-account-plus"
+        >
           Atribuir
         </v-btn>
       </v-card-actions>

@@ -1,7 +1,6 @@
 import { reactive, computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { TagsService } from '@/services'
-import router from '@/router'
 import { toast } from 'vue3-toastify'
 
 export const useTagsStore = defineStore('tags', () => {
@@ -78,14 +77,16 @@ export const useTagsStore = defineStore('tags', () => {
   const deleteTags = async (id) => {
     state.loading = true
     try {
+      await TagsService.deleteTags(id)
       const index = state.tags.findIndex((s) => s.id === id)
       if (index !== -1) {
         state.tags.splice(index, 1)
       }
-      await TagsService.deleteTags(id)
-      router.go(0)
+      toast.success('Tag removida com sucesso!')
     } catch (error) {
-      state.error = error
+      const message =
+        error?.response?.data?.message || error?.response?.data?.error || 'Erro ao remover tag'
+      toast.error(message)
     } finally {
       state.loading = false
     }
@@ -94,24 +95,37 @@ export const useTagsStore = defineStore('tags', () => {
   const verifyTag = async (tagId) => {
     state.loading = true
     try {
-      const response = await TagsService.verifyTag(tagId)
-      router.go(0)
-      return response.data
+      await TagsService.verifyTag(tagId)
+      const index = state.tags.findIndex((t) => t.id === tagId)
+      if (index !== -1) {
+        state.tags[index] = { ...state.tags[index], valid: !state.tags[index].valid }
+      }
+      toast.success('Status da tag atualizado!')
+      await getTags()
     } catch (error) {
-      state.error = error
+      const message =
+        error?.response?.data?.message || error?.response?.data?.error || 'Erro ao atualizar tag'
+      toast.error(message)
     } finally {
       state.loading = false
     }
   }
 
-  const unassignTag = async (id) => {
+  const unassignTag = async ({ id, rfid, userId }) => {
     state.loading = true
     try {
-      const response = await TagsService.unassignTag(id)
-      router.go(0)
-      return response.data
+      await TagsService.unassignTag({ rfid, userId })
+      const index = state.tags.findIndex((t) => t.id === id)
+      if (index !== -1) {
+        state.tags[index] = { ...state.tags[index], user_id: null, user: null }
+      }
+      state.myTags = state.myTags.filter((t) => t.id !== id)
+      toast.success('Tag desvinculada com sucesso!')
+      await getTags()
     } catch (error) {
-      state.error = error
+      const message =
+        error?.response?.data?.message || error?.response?.data?.error || 'Erro ao desvincular tag'
+      toast.error(message)
     } finally {
       state.loading = false
     }
