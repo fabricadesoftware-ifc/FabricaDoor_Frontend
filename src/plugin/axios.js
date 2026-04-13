@@ -9,6 +9,7 @@ import { useAuthStore } from '@/stores/auth'
 
 let isRefreshing = false
 let failedQueue = []
+const refreshUrl = new URL('auth/refresh', import.meta.env.VITE_BACKEND_URL).toString()
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
@@ -45,11 +46,20 @@ api.interceptors.response.use(
     loadingStore.stopLoading()
 
     const originalRequest = error.config
-    const isTokenExpired =
-      error.response?.status === 401 &&
-      error.response?.data?.code === 'TOKEN_EXPIRED'
+    const authStore = useAuthStore()
+    const refreshToken = authStore.authUser?.refreshToken
+    const status = error.response?.status
+    const errorCode = error.response?.data?.code
+    const requestUrl = originalRequest?.url || ''
+    const isRefreshRequest = requestUrl.includes('auth/refresh')
+    const shouldRefresh =
+      status === 401 &&
+      !isRefreshRequest &&
+      !originalRequest?._retry &&
+      !!refreshToken &&
+      (!errorCode || errorCode === 'TOKEN_EXPIRED')
 
-    if (isTokenExpired && !originalRequest._retry) {
+    if (shouldRefresh) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
@@ -62,18 +72,19 @@ api.interceptors.response.use(
       originalRequest._retry = true
       isRefreshing = true
 
-      const authStore = useAuthStore()
-
       try {
-        const { data } = await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}auth/refresh`,
-          { refreshToken: authStore.authUser.refreshToken }
-        )
+        const { data } = await axios.post(refreshUrl, { refreshToken })
+        const nextToken = data?.token
+        const nextRefreshToken = data?.refreshToken
 
-        authStore.setTokens(data.token, data.refreshToken)
-        processQueue(null, data.token)
+        if (!nextToken || !nextRefreshToken) {
+          throw new Error('Refresh response missing token data')
+        }
 
-        originalRequest.headers.Authorization = `Bearer ${data.token}`
+        authStore.setTokens(nextToken, nextRefreshToken)
+        processQueue(null, nextToken)
+
+        originalRequest.headers.Authorization = `Bearer ${nextToken}`
         return api(originalRequest)
       } catch (refreshError) {
         processQueue(refreshError, null)

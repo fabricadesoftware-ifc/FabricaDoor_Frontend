@@ -5,7 +5,7 @@ import router from '@/router'
 import { ref } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
-  const authUser = useStorage('authUser', {
+  const defaultAuthUser = {
     token: null,
     refreshToken: null,
     isLogged: false,
@@ -17,7 +17,9 @@ export const useAuthStore = defineStore('auth', () => {
       isVerified: false,
       picture: ''
     }
-  })
+  }
+
+  const authUser = useStorage('authUser', defaultAuthUser)
 
   const isLoading = ref(false)
 
@@ -70,7 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      authUser.value = {}
+      authUser.value = { ...defaultAuthUser, user: { ...defaultAuthUser.user } }
       router.push('/login')
     } catch (error) {
       console.error(error)
