@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useUsersStore, useTagsStore } from '@/stores'
 import { AlertOutline } from '../icons'
 
@@ -21,6 +21,15 @@ const data = reactive({
   rfid: null,
   userId: 0
 })
+
+const users = computed(() => usersStore.state.users?.data?.users || [])
+
+const filterUsers = (_value, query, item) => {
+  const user = item?.raw || {}
+  const searchText = [user.name, user.email, user.id].filter(Boolean).join(' ').toLowerCase()
+
+  return searchText.includes(query.toLowerCase())
+}
 
 watch(
   () => props.objectSelected,
@@ -105,16 +114,30 @@ const handleUnassign = async () => {
             </v-list-item>
           </v-list>
 
-          <v-select
+          <v-autocomplete
             v-model="data.userId"
-            :items="usersStore.state.users?.data?.users || []"
+            :items="users"
+            :custom-filter="filterUsers"
             item-title="name"
             item-value="id"
             label="Selecionar Usuário"
-            prepend-inner-icon="mdi-account"
+            prepend-inner-icon="mdi-account-search"
             variant="outlined"
             class="mt-4"
-          />
+            clearable
+            auto-select-first
+            no-data-text="Nenhum usuario encontrado"
+          >
+            <template #item="{ props: itemProps, item }">
+              <v-list-item v-bind="itemProps">
+                <v-list-item-subtitle>{{ item.raw.email }}</v-list-item-subtitle>
+              </v-list-item>
+            </template>
+
+            <template #selection="{ item }">
+              {{ item.raw.name }}
+            </template>
+          </v-autocomplete>
         </v-card-text>
       </v-card-item>
 
