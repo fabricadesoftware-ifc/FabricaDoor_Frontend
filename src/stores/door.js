@@ -5,7 +5,8 @@ import { DoorService } from '@/services'
 export const useDoorStore = defineStore('door', () => {
   const state = reactive({
     loading: false,
-    error: null
+    error: null,
+    mode: false
   })
 
   const openDoor = async () => {
@@ -15,18 +16,35 @@ export const useDoorStore = defineStore('door', () => {
       return response.data
     } catch (error) {
       state.error = error
+      throw error
     } finally {
       state.loading = false
     }
   }
 
-  const toggleMode = async () => {
+  const getMode = async () => {
     state.loading = true
     try {
-      const response = await DoorService.toggleMode()
+      const response = await DoorService.getMode()
+      state.mode = response.data
       return response.data
     } catch (error) {
       state.error = error
+      throw error
+    } finally {
+      state.loading = false
+    }
+  }
+
+  const setMode = async (mode) => {
+    state.loading = true
+    try {
+      const response = await DoorService.setMode(mode)
+      state.mode = response.data?.mode ?? mode
+      return response.data
+    } catch (error) {
+      state.error = error
+      throw error
     } finally {
       state.loading = false
     }
@@ -35,6 +53,7 @@ export const useDoorStore = defineStore('door', () => {
   return {
     state,
     openDoor,
-    toggleMode
+    getMode,
+    setMode
   }
 })

@@ -10,11 +10,11 @@ class DoorService {
       if (error.response?.status === 403) {
         useAuthStore().logout()
       }
-      return error
+      throw error
     }
   }
 
-  async toggleMode() {
+  async getMode() {
     try {
       const response = await api.get('door/mode')
       return response.data
@@ -22,7 +22,19 @@ class DoorService {
       if (error.response?.status === 403) {
         useAuthStore().logout()
       }
-      return error
+      throw error
+    }
+  }
+
+  async setMode(mode) {
+    try {
+      const response = await api.post('door/mode', { mode })
+      return response.data
+    } catch (error) {
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
+      }
+      throw error
     }
   }
 }

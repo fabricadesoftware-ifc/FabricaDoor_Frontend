@@ -55,11 +55,11 @@
 </style>
 
 <template>
-    <div class="container" @click="doorStore.toggleMode">
+    <div class="container" @click="handleToggleMode">
         <div class="toggle-text">
             <span>CA</span>
         </div>
-        <input hidden id="check" name="check" type="checkbox">
+        <input hidden id="check" name="check" type="checkbox" :checked="doorStore.state.mode">
         <label class="toggle" for="check">
             <div class="toggle__circle"></div>
         </label>
@@ -70,7 +70,16 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 import { useDoorStore } from '@/stores';
 
 const doorStore = useDoorStore();
+
+onMounted(() => {
+    doorStore.getMode().catch(() => {});
+});
+
+const handleToggleMode = () => {
+    doorStore.setMode(!doorStore.state.mode).catch(() => {});
+};
 </script>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useDoorStore } from '@/stores';
 import { toast } from 'vue3-toastify';
 
@@ -8,6 +8,20 @@ const isOpening = ref(false);
 const isToggling = ref(false);
 const doorCooldown = ref(false);
 const isCAMode = ref(false);
+
+const normalizeMode = (mode) => {
+    if (typeof mode === 'boolean') return mode;
+    if (typeof mode === 'string') return mode === 'cadastro' || mode === 'ca';
+    return false;
+};
+
+onMounted(async () => {
+    try {
+        isCAMode.value = normalizeMode(await doorStore.getMode());
+    } catch {
+        toast.error('Erro ao carregar o modo atual');
+    }
+});
 
 const handleOpenDoor = async () => {
     if (doorCooldown.value) return;
@@ -33,7 +47,7 @@ const handleToggleMode = async (newMode) => {
     isToggling.value = true;
     isCAMode.value = newMode;
     try {
-        await doorStore.toggleMode();
+        await doorStore.setMode(newMode);
         toast.success(`Modo alterado para ${newMode ? 'CA (Controlado)' : 'OP (Aberto)'}`);
     } catch {
         isCAMode.value = previousMode;
