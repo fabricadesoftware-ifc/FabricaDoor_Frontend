@@ -33,6 +33,7 @@ const closeModal = () => {
 const showModal = ref(false);
 const showModalTags = ref(false);
 const selected = ref({});
+const unassigningTagId = ref(null);
 
 function openModalValid(item) {
     selected.value = item;
@@ -42,6 +43,19 @@ function openModalValid(item) {
 function openModalTag(item) {
     selected.value = item;
     showModalTags.value = true;
+}
+
+async function handleUnassign(item) {
+    unassigningTagId.value = item.id;
+    try {
+        await tagsStore.unassignTag({
+            id: item.id,
+            rfid: item.rfid,
+            userId: item.user_id,
+        });
+    } finally {
+        unassigningTagId.value = null;
+    }
 }
 
 // Adicionar handler para tecla Esc
@@ -114,17 +128,23 @@ const handleKeydown = (e) => {
                                 </v-list>
                             </v-card-text>
 
-                            <v-card-actions class="pa-4">
+                            <v-card-actions class="pa-4 tag-actions">
                                 <v-spacer></v-spacer>
                                 <v-btn v-if="!item.user" color="primary" variant="tonal" prepend-icon="mdi-account-plus"
                                     @click="openModalTag(item)">
                                     Atribuir
                                 </v-btn>
-                                <v-btn v-else :color="item.valid ? 'error' : 'success'"
-                                    :prepend-icon="item.valid ? 'mdi-close-circle' : 'mdi-check-circle'"
-                                    @click="openModalValid(item)">
-                                    {{ item.valid ? 'Desativar' : 'Ativar' }}
-                                </v-btn>
+                                <template v-else>
+                                    <v-btn color="warning" variant="tonal" prepend-icon="mdi-account-remove"
+                                        :loading="unassigningTagId === item.id" @click="handleUnassign(item)">
+                                        Desvincular
+                                    </v-btn>
+                                    <v-btn :color="item.valid ? 'error' : 'success'"
+                                        :prepend-icon="item.valid ? 'mdi-close-circle' : 'mdi-check-circle'"
+                                        @click="openModalValid(item)">
+                                        {{ item.valid ? 'Desativar' : 'Ativar' }}
+                                    </v-btn>
+                                </template>
                             </v-card-actions>
                         </v-card>
                     </v-col>
@@ -142,5 +162,10 @@ const handleKeydown = (e) => {
 :deep(.v-toolbar-title) {
     font-size: 1.25rem;
     font-weight: 500;
+}
+
+.tag-actions {
+    flex-wrap: wrap;
+    gap: 8px;
 }
 </style>
