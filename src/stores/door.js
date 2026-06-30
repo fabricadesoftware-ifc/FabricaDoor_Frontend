@@ -6,7 +6,10 @@ export const useDoorStore = defineStore('door', () => {
   const state = reactive({
     loading: false,
     error: null,
-    mode: false
+    mode: false,
+    fingerprintStatus: null,
+    fingerprints: [],
+    fingerprintLoading: false
   })
 
   const openDoor = async () => {
@@ -50,10 +53,86 @@ export const useDoorStore = defineStore('door', () => {
     }
   }
 
+  const getFingerprintStatus = async () => {
+    state.fingerprintLoading = true
+    try {
+      const response = await DoorService.getFingerprintStatus()
+      state.fingerprintStatus = response.data
+      return response.data
+    } catch (error) {
+      state.error = error
+      throw error
+    } finally {
+      state.fingerprintLoading = false
+    }
+  }
+
+  const getFingerprints = async () => {
+    state.fingerprintLoading = true
+    try {
+      const response = await DoorService.getFingerprints()
+      state.fingerprints = response.data?.fingerprints || []
+      return response.data
+    } catch (error) {
+      state.error = error
+      throw error
+    } finally {
+      state.fingerprintLoading = false
+    }
+  }
+
+  const enrollFingerprint = async ({ slot, userId }) => {
+    state.fingerprintLoading = true
+    try {
+      const response = await DoorService.enrollFingerprint({ slot, userId })
+      state.fingerprintStatus = response.data
+      return response.data
+    } catch (error) {
+      state.error = error
+      throw error
+    } finally {
+      state.fingerprintLoading = false
+    }
+  }
+
+  const cancelFingerprintEnroll = async () => {
+    state.fingerprintLoading = true
+    try {
+      const response = await DoorService.cancelFingerprintEnroll()
+      state.fingerprintStatus = response.data
+      return response.data
+    } catch (error) {
+      state.error = error
+      throw error
+    } finally {
+      state.fingerprintLoading = false
+    }
+  }
+
+  const deleteFingerprint = async (slot) => {
+    state.fingerprintLoading = true
+    try {
+      const response = await DoorService.deleteFingerprint(slot)
+      state.fingerprints = state.fingerprints.filter((fingerprint) => fingerprint.slot !== slot)
+      await getFingerprints()
+      return response.data
+    } catch (error) {
+      state.error = error
+      throw error
+    } finally {
+      state.fingerprintLoading = false
+    }
+  }
+
   return {
     state,
     openDoor,
     getMode,
-    setMode
+    setMode,
+    getFingerprintStatus,
+    getFingerprints,
+    enrollFingerprint,
+    cancelFingerprintEnroll,
+    deleteFingerprint
   }
 })

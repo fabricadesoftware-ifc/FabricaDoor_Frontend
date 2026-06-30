@@ -8,6 +8,7 @@ import TagsComp from '@/components/DashBoard/TagsComp.vue';
 import FooterComp from '@/components/global/Footer/FooterComp.vue';
 import UsersComp from '@/components/DashBoard/UsersComp.vue';
 import DoorControlComp from '@/components/DashBoard/DoorControlComp.vue';
+import FingerprintControlComp from '@/components/DashBoard/FingerprintControlComp.vue';
 
 const usersStore = useUsersStore();
 const logsStore = useLogsStore();
@@ -54,7 +55,10 @@ onMounted(refreshAll);
 
                 <v-row class="mt-4">
                     <v-col cols="12" lg="4">
-                        <DoorControlComp />
+                        <div class="d-flex flex-column ga-4">
+                            <DoorControlComp />
+                            <FingerprintControlComp />
+                        </div>
                     </v-col>
                     <v-col cols="12" lg="8">
                         <LogsComp />
