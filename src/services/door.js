@@ -62,9 +62,9 @@ class DoorService {
     }
   }
 
-  async enrollFingerprint({ slot, userId }) {
+  async enrollFingerprint({ userId }) {
     try {
-      const response = await api.post('door/fingerprints/enroll', { slot, userId })
+      const response = await api.post('door/fingerprints/enroll', { userId })
       return response.data
     } catch (error) {
       if (error.response?.status === 403) {

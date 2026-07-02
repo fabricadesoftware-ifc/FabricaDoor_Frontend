@@ -9,7 +9,6 @@ const usersStore = useUsersStore()
 const polling = ref(null)
 
 const form = reactive({
-  slot: 1,
   userId: null
 })
 
@@ -19,7 +18,9 @@ const status = computed(() => doorStore.state.fingerprintStatus || {})
 const loading = computed(() => doorStore.state.fingerprintLoading)
 const isSuperUser = computed(() => !!authStore.authUser?.user?.isSuper)
 const sensorTemplateCount = computed(() => Number(status.value.templates_sensor || 0))
-const hasUnmappedTemplates = computed(() => sensorTemplateCount.value > fingerprints.value.length)
+const hasUnmappedTemplates = computed(() =>
+  fingerprints.value.some((fingerprint) => fingerprint.mapped === false)
+)
 
 const activeEnrollStates = ['waiting_first_finger', 'remove_finger', 'waiting_second_finger']
 const isEnrolling = computed(() => activeEnrollStates.includes(status.value.enroll_state_text))
@@ -55,19 +56,8 @@ const filterUsers = (_value, query, item) => {
   return searchText.includes(query.toLowerCase())
 }
 
-const nextAvailableSlot = () => {
-  const usedSlots = new Set(fingerprints.value.map((fingerprint) => Number(fingerprint.slot)))
-  for (let slot = 1; slot <= 162; slot += 1) {
-    if (!usedSlots.has(slot)) return slot
-  }
-  return 1
-}
-
 const refresh = async () => {
   await Promise.all([doorStore.getFingerprintStatus(), doorStore.getFingerprints()])
-  if (!form.slot || fingerprints.value.some((fingerprint) => fingerprint.slot === form.slot)) {
-    form.slot = nextAvailableSlot()
-  }
   if (isEnrolling.value) {
     startPolling()
   }
@@ -88,7 +78,6 @@ const startPolling = () => {
       if (!isEnrolling.value) {
         stopPolling()
         await doorStore.getFingerprints()
-        form.slot = nextAvailableSlot()
       }
     } catch {
       stopPolling()
@@ -99,7 +88,6 @@ const startPolling = () => {
 const handleEnroll = async () => {
   try {
     await doorStore.enrollFingerprint({
-      slot: Number(form.slot),
       userId: Number(form.userId)
     })
     toast.success('Cadastro biometrico iniciado')
@@ -123,7 +111,6 @@ const handleDelete = async (slot) => {
   try {
     await doorStore.deleteFingerprint(slot)
     toast.success(`Digital do slot ${slot} removida`)
-    form.slot = nextAvailableSlot()
   } catch (error) {
     toast.error(error?.response?.data?.error || 'Erro ao remover digital')
   }
@@ -174,23 +161,11 @@ onBeforeUnmount(stopPolling)
         variant="tonal"
         density="compact"
       >
-        O sensor tem {{ sensorTemplateCount }} digitais, mas apenas {{ fingerprints.length }} possuem usuario vinculado.
+        Existem digitais gravadas no sensor sem usuario vinculado. Elas nao abrem a porta enquanto estiverem sem vinculo.
       </v-alert>
 
       <v-row v-if="isSuperUser" dense>
-        <v-col cols="12" sm="4">
-          <v-text-field
-            v-model="form.slot"
-            type="number"
-            label="Slot"
-            :min="1"
-            :max="162"
-            variant="outlined"
-            density="compact"
-            hide-details
-          />
-        </v-col>
-        <v-col cols="12" sm="8">
+        <v-col cols="12">
           <v-autocomplete
             v-model="form.userId"
             :items="users"
@@ -219,7 +194,7 @@ onBeforeUnmount(stopPolling)
           color="primary"
           prepend-icon="mdi-fingerprint"
           :loading="loading && !isEnrolling"
-          :disabled="!form.slot || !form.userId || isEnrolling"
+          :disabled="!form.userId || isEnrolling"
           @click="handleEnroll"
         >
           Cadastrar
@@ -248,7 +223,7 @@ onBeforeUnmount(stopPolling)
             Slot {{ fingerprint.slot }}
           </v-list-item-title>
           <v-list-item-subtitle>
-            {{ userById(fingerprint.user_id)?.name || `Usuario #${fingerprint.user_id}` }}
+            {{ fingerprint.mapped === false ? 'Sem usuario vinculado' : userById(fingerprint.user_id)?.name || `Usuario #${fingerprint.user_id}` }}
           </v-list-item-subtitle>
           <template v-if="isSuperUser" #append>
             <v-btn

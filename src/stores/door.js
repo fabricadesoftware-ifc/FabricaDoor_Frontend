@@ -81,10 +81,10 @@ export const useDoorStore = defineStore('door', () => {
     }
   }
 
-  const enrollFingerprint = async ({ slot, userId }) => {
+  const enrollFingerprint = async ({ userId }) => {
     state.fingerprintLoading = true
     try {
-      const response = await DoorService.enrollFingerprint({ slot, userId })
+      const response = await DoorService.enrollFingerprint({ userId })
       state.fingerprintStatus = response.data
       return response.data
     } catch (error) {
