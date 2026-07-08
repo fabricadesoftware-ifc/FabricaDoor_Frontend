@@ -27,6 +27,18 @@ class LogsService {
       throw error
     }
   }
+
+  async getUserAccessSummary(userId) {
+    try {
+      const response = await api.get(`logs/user/${userId}/summary`)
+      return response.data
+    } catch (error) {
+      if (error.response?.status === 403) {
+        useAuthStore().logout()
+      }
+      throw error
+    }
+  }
 }
 
 export default new LogsService()

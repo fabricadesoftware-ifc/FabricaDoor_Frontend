@@ -7,6 +7,13 @@ export const useLogsStore = defineStore('log', () => {
   const state = reactive({
     logs: [],
     todayCount: 0,
+    userAccessSummary: {
+      totalAccess: 0,
+      biometricAccess: 0,
+      rfidAccess: 0,
+      frontendAccess: 0,
+      lastAccess: null
+    },
     loading: false,
     loadingMore: false,
     error: null,
@@ -90,6 +97,21 @@ export const useLogsStore = defineStore('log', () => {
     }
   }
 
+  const getUserAccessSummary = async (userId) => {
+    try {
+      const response = await LogsService.getUserAccessSummary(userId)
+      state.userAccessSummary = {
+        totalAccess: response.data?.totalAccess ?? 0,
+        biometricAccess: response.data?.biometricAccess ?? 0,
+        rfidAccess: response.data?.rfidAccess ?? 0,
+        frontendAccess: response.data?.frontendAccess ?? 0,
+        lastAccess: response.data?.lastAccess ?? null
+      }
+    } catch (error) {
+      state.error = error
+    }
+  }
+
   return {
     state,
     hasMore,
@@ -97,6 +119,7 @@ export const useLogsStore = defineStore('log', () => {
     getLogs,
     loadMore,
     resetLogs,
-    getTodayCount
+    getTodayCount,
+    getUserAccessSummary
   }
 })

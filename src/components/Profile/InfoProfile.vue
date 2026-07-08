@@ -1,26 +1,32 @@
 <script setup>
-import { useAuthStore, useDoorStore } from '@/stores';
+import { useAuthStore, useDoorStore, useLogsStore } from '@/stores';
 import { OpenDoor } from '..';
 import { debounce } from 'lodash';
-import { ref, computed } from 'vue';
+import { computed, onMounted } from 'vue';
 
 const authStore = useAuthStore();
 const doorStore = useDoorStore();
+const logsStore = useLogsStore();
+
+const usedTimes = computed(() => logsStore.state.userAccessSummary.totalAccess);
 
 const usageLevel = computed(() => {
-    const usedTimes = 1; // Substitua pelo valor real
-    if (usedTimes <= 50) return { text: 'Iniciante', color: 'info' };
-    if (usedTimes <= 100) return { text: 'Regular', color: 'primary' };
-    if (usedTimes <= 150) return { text: 'Frequente', color: 'success' };
-    if (usedTimes <= 200) return { text: 'Assíduo', color: 'success' };
-    if (usedTimes <= 300) return { text: 'Veterano', color: 'warning' };
-    if (usedTimes <= 400) return { text: 'Expert', color: 'warning' };
+    if (usedTimes.value <= 50) return { text: 'Iniciante', color: 'info' };
+    if (usedTimes.value <= 100) return { text: 'Regular', color: 'primary' };
+    if (usedTimes.value <= 150) return { text: 'Frequente', color: 'success' };
+    if (usedTimes.value <= 200) return { text: 'Assíduo', color: 'success' };
+    if (usedTimes.value <= 300) return { text: 'Veterano', color: 'warning' };
+    if (usedTimes.value <= 400) return { text: 'Expert', color: 'warning' };
     return { text: 'Master', color: 'error' };
 });
 
 const handleOpenDoor = debounce(() => {
     doorStore.openDoor(authStore.$state.authUser.token);
 }, 200);
+
+onMounted(() => {
+    logsStore.getUserAccessSummary(authStore.$state.authUser.user.id);
+});
 </script>
 
 <template>
@@ -46,6 +52,10 @@ const handleOpenDoor = debounce(() => {
 
                     <v-chip :color="usageLevel.color" size="small" label>
                         {{ usageLevel.text }}
+                    </v-chip>
+
+                    <v-chip color="secondary" size="small" label>
+                        {{ usedTimes }} acessos
                     </v-chip>
                 </div>
             </div>
